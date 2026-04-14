@@ -47,7 +47,8 @@ class FoxessApiRequestError(FoxessApiError):
 
 
 def generate_signature(path: str, token: str, timestamp_ms: str) -> str:
-    signature_raw = f"{path}\r\n{token}\r\n{timestamp_ms}"
+    # FoxESS expects literal "\r\n" in the signature payload, matching script 020 behavior.
+    signature_raw = fr"{path}\r\n{token}\r\n{timestamp_ms}"
     return hashlib.md5(signature_raw.encode("utf-8")).hexdigest()
 
 
@@ -185,7 +186,13 @@ class FoxessApiClient:
         if errno not in (None, 0):
             message = str(payload.get("msg", "Unknown FoxESS API error"))
             LOGGER.warning("FoxESS API error on %s: errno=%s msg=%s", path, errno, message)
-            if "token" in message.lower() or "auth" in message.lower():
+            lower_message = message.lower()
+            if (
+                "token" in lower_message
+                or "auth" in lower_message
+                or "signature" in lower_message
+                or errno == 40256
+            ):
                 raise FoxessApiAuthError(message)
             raise FoxessApiRequestError(f"FoxESS API error errno={errno}: {message}")
 

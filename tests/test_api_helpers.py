@@ -5,6 +5,8 @@ Criado por: Codex / OpenAI
 Projeto/Pasta: C:\\tmp\\foxess-ha.v2
 """
 
+import hashlib
+
 from custom_components.foxess_ha_v2.api import (
     extract_realtime_by_sn,
     extract_scalar_variable_names,
@@ -16,6 +18,12 @@ def test_generate_signature_matches_reference_string():
     signature = generate_signature("/op/v0/device/list", "token123", "1700000000000")
     assert len(signature) == 32
     assert signature.isalnum()
+
+
+def test_generate_signature_uses_literal_backslash_rn():
+    expected_raw = r"/op/v0/device/list\r\ntoken123\r\n1700000000000"
+    expected = hashlib.md5(expected_raw.encode("utf-8")).hexdigest()
+    assert generate_signature("/op/v0/device/list", "token123", "1700000000000") == expected
 
 
 def test_extract_realtime_by_sn_from_list():
