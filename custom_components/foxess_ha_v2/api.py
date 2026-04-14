@@ -7,9 +7,11 @@ Projeto/Pasta: C:\\tmp\\foxess-ha.v2
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Iterable
 import hashlib
 import json
+import logging
 from pathlib import Path
 import time
 from typing import Any
@@ -24,9 +26,12 @@ from .const import (
     ENDPOINT_REALTIME_QUERY,
     ENDPOINT_VARIABLE_CATALOG,
     REQUEST_TIMEOUT_SECONDS,
+    REQUEST_VERIFY_SSL,
     SCHEMA_BASE_DIR,
     SCHEMA_VERSION_FOLDER,
 )
+
+LOGGER = logging.getLogger(__name__)
 
 
 class FoxessApiError(Exception):
@@ -136,6 +141,7 @@ class FoxessApiClient:
         timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT_SECONDS)
 
         try:
+            LOGGER.debug("FoxESS request %s %s", method.upper(), path)
             async with self._session.request(
                 method=method.upper(),
                 url=url,
@@ -143,20 +149,42 @@ class FoxessApiClient:
                 json=body,
                 headers=headers,
                 timeout=timeout,
+                ssl=REQUEST_VERIFY_SSL,
             ) as response:
-                payload = await response.json(content_type=None)
+                raw_text = await response.text()
+                try:
+                    payload = json.loads(raw_text) if raw_text else {}
+                except json.JSONDecodeError as exc:
+                    LOGGER.error(
+                        "FoxESS non-JSON response on %s status=%s body_preview=%s",
+                        path,
+                        response.status,
+                        raw_text[:200],
+                    )
+                    raise FoxessApiRequestError(
+                        f"Invalid JSON response from {path}. status={response.status} body={raw_text[:300]}"
+                    ) from exc
+                LOGGER.debug(
+                    "FoxESS response %s status=%s errno=%s",
+                    path,
+                    response.status,
+                    payload.get("errno"),
+                )
                 if response.status >= 400:
                     raise FoxessApiRequestError(
                         f"HTTP {response.status} calling {path}: {json.dumps(payload, ensure_ascii=True)[:500]}"
                     )
         except aiohttp.ClientError as exc:
+            LOGGER.error("FoxESS client error calling %s: %s", path, exc)
             raise FoxessApiRequestError(f"Request to {path} failed: {exc}") from exc
-        except json.JSONDecodeError as exc:
-            raise FoxessApiRequestError(f"Invalid JSON response from {path}") from exc
+        except asyncio.TimeoutError as exc:
+            LOGGER.error("FoxESS timeout calling %s", path)
+            raise FoxessApiRequestError(f"Request to {path} timed out") from exc
 
         errno = payload.get("errno")
         if errno not in (None, 0):
             message = str(payload.get("msg", "Unknown FoxESS API error"))
+            LOGGER.warning("FoxESS API error on %s: errno=%s msg=%s", path, errno, message)
             if "token" in message.lower() or "auth" in message.lower():
                 raise FoxessApiAuthError(message)
             raise FoxessApiRequestError(f"FoxESS API error errno={errno}: {message}")
@@ -177,6 +205,7 @@ class FoxessApiClient:
                 devices = [item for item in maybe_data if isinstance(item, dict)]
         elif isinstance(result, list):
             devices = [item for item in result if isinstance(item, dict)]
+        LOGGER.debug("FoxESS device list returned %s devices", len(devices))
         return {"raw": payload, "devices": devices}
 
     async def async_get_variable_catalog(self) -> dict[str, Any]:
@@ -187,6 +216,7 @@ class FoxessApiClient:
             for variable, meta in result.items():
                 if isinstance(variable, str) and isinstance(meta, dict):
                     catalog[variable] = meta
+        LOGGER.debug("FoxESS variable catalog returned %s variables", len(catalog))
         return {"raw": payload, "variables": catalog}
 
     async def async_query_realtime(
@@ -199,6 +229,11 @@ class FoxessApiClient:
             body["variables"] = variables
         payload = await self._request("POST", ENDPOINT_REALTIME_QUERY, body=body)
         by_sn = extract_realtime_by_sn(payload, sns)
+        LOGGER.debug(
+            "FoxESS realtime query requested sns=%s mapped=%s",
+            len(sns),
+            len(by_sn),
+        )
         return {"raw": payload, "by_sn": by_sn}
 
     async def async_get_access_count(self) -> dict[str, Any]:
@@ -209,6 +244,7 @@ class FoxessApiClient:
         if isinstance(result, dict):
             total = result.get("total")
             remaining = result.get("remaining")
+        LOGGER.debug("FoxESS access count total=%s remaining=%s", total, remaining)
         return {"raw": payload, "total": total, "remaining": remaining}
 
     def load_local_schema_manifest(self) -> dict[str, Any]:

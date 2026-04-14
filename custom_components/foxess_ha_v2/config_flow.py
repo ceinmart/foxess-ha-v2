@@ -8,6 +8,7 @@ Projeto/Pasta: C:\\tmp\\foxess-ha.v2
 from __future__ import annotations
 
 import hashlib
+import logging
 from typing import Any
 
 from homeassistant import config_entries
@@ -46,6 +47,8 @@ from .const import (
     SCHEMA_VERSION_FOLDER,
 )
 from .polling import estimate_calls_per_day, parse_polling_expression
+
+LOGGER = logging.getLogger(__name__)
 
 STEP_SELECT_DEVICES = "select_devices"
 STEP_DEVICE_SETTINGS = "device_settings"
@@ -90,21 +93,26 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             unique_ref = hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:12]
             await self.async_set_unique_id(f"foxess:{unique_ref}")
             self._abort_if_unique_id_configured()
+            LOGGER.debug("Config flow user step started unique_ref=%s", unique_ref)
 
             api_client = FoxessApiClient(async_get_clientsession(self.hass), api_key)
             try:
                 device_result = await api_client.async_list_devices()
             except FoxessApiAuthError:
+                LOGGER.warning("FoxESS auth error during config step user")
                 errors["base"] = "invalid_auth"
             except FoxessApiRequestError:
+                LOGGER.exception("FoxESS connectivity error during config step user")
                 errors["base"] = "cannot_connect"
             except Exception:
+                LOGGER.exception("Unexpected error during config step user")
                 errors["base"] = "unknown"
             else:
                 devices = device_result.get("devices", [])
                 if not devices:
                     errors["base"] = "no_devices"
                 else:
+                    LOGGER.debug("Config flow discovered %s devices", len(devices))
                     self._api_key = api_key
                     self._entry_label = f"FoxESS ({_mask_api_key(api_key)})"
                     self._discovered_devices = devices
@@ -122,6 +130,7 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not selected:
                 errors["base"] = "no_devices"
             else:
+                LOGGER.debug("Config flow selected %s devices", len(selected))
                 self._selected_device_sns = list(selected)
                 return await self.async_step_device_settings()
 
@@ -137,18 +146,21 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             await self._async_discover_variables_and_access_count()
         except FoxessApiAuthError:
+            LOGGER.warning("FoxESS auth error during config step device settings")
             return self.async_show_form(
                 step_id=STEP_DEVICE_SETTINGS,
                 data_schema=self._build_device_settings_schema(selected_devices, defaults=user_input),
                 errors={"base": "invalid_auth"},
             )
         except FoxessApiRequestError:
+            LOGGER.exception("FoxESS connectivity error during config step device settings")
             return self.async_show_form(
                 step_id=STEP_DEVICE_SETTINGS,
                 data_schema=self._build_device_settings_schema(selected_devices, defaults=user_input),
                 errors={"base": "cannot_connect"},
             )
         except Exception:
+            LOGGER.exception("Unexpected error during config step device settings")
             return self.async_show_form(
                 step_id=STEP_DEVICE_SETTINGS,
                 data_schema=self._build_device_settings_schema(selected_devices, defaults=user_input),
@@ -191,6 +203,11 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
 
             if not errors:
+                LOGGER.debug(
+                    "Config flow creating entry with devices=%s variable_catalog=%s",
+                    len(devices_cfg),
+                    len(self._variable_catalog),
+                )
                 return self.async_create_entry(
                     title=self._entry_label,
                     data={
@@ -231,11 +248,14 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         api_client = FoxessApiClient(async_get_clientsession(self.hass), self._api_key)
         variable_response = await api_client.async_get_variable_catalog()
         self._variable_catalog = variable_response.get("variables", {})
+        LOGGER.debug("Discovery step variable catalog size=%s", len(self._variable_catalog))
 
         realtime_response = await api_client.async_query_realtime(self._selected_device_sns)
         by_sn = realtime_response.get("by_sn", {})
 
         missing_sns = [sn for sn in self._selected_device_sns if sn not in by_sn]
+        if missing_sns:
+            LOGGER.debug("Discovery step missing grouped realtime for %s devices", len(missing_sns))
         for sn in missing_sns:
             single_response = await api_client.async_query_realtime([sn])
             single_by_sn = single_response.get("by_sn", {})
@@ -250,12 +270,18 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not inferred and self._variable_catalog:
                 inferred = sorted(self._variable_catalog.keys())
             self._variables_by_device[sn] = sorted(set(inferred))
+            LOGGER.debug("Discovery step device=%s supported_variables=%s", sn, len(self._variables_by_device[sn]))
 
         access_response = await api_client.async_get_access_count()
         self._access_count_snapshot = {
             "total": access_response.get("total"),
             "remaining": access_response.get("remaining"),
         }
+        LOGGER.debug(
+            "Discovery step access_count total=%s remaining=%s",
+            self._access_count_snapshot.get("total"),
+            self._access_count_snapshot.get("remaining"),
+        )
 
     def _build_device_settings_schema(
         self,

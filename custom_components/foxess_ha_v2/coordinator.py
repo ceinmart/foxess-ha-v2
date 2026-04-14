@@ -63,12 +63,21 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if is_poll_due(policy, now_local, last_run):
                 due_sns.append(sn)
 
+        LOGGER.debug(
+            "Coordinator tick entry_id=%s devices=%s due=%s",
+            self._config_entry.entry_id,
+            len(devices),
+            len(due_sns),
+        )
+
         try:
             if due_sns:
                 realtime_payload = await self._api_client.async_query_realtime(due_sns)
                 realtime_by_sn = realtime_payload.get("by_sn", {})
 
                 missing_sns = [sn for sn in due_sns if sn not in realtime_by_sn]
+                if missing_sns:
+                    LOGGER.debug("Coordinator grouped response missing %s devices", len(missing_sns))
                 for sn in missing_sns:
                     single_payload = await self._api_client.async_query_realtime([sn])
                     single_by_sn = single_payload.get("by_sn", {})
@@ -80,6 +89,7 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
                 if realtime_by_sn:
                     self._last_realtime_by_sn.update(realtime_by_sn)
+                    LOGGER.debug("Coordinator cached realtime payload for %s devices", len(self._last_realtime_by_sn))
 
             should_refresh_access = False
             if self._last_access_refresh is None:
@@ -91,6 +101,7 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if should_refresh_access:
                 self._last_access_count = await self._api_client.async_get_access_count()
                 self._last_access_refresh = now_local
+                LOGGER.debug("Coordinator refreshed access count snapshot")
         except FoxessApiAuthError as exc:
             raise ConfigEntryAuthFailed(str(exc)) from exc
         except FoxessApiRequestError as exc:

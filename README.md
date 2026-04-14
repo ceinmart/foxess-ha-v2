@@ -38,3 +38,14 @@ foxess-ha-v2/
 - FoxESS API schemas are embedded from local project artifacts.
 - API key is masked in diagnostics output.
 - This package is designed to evolve incrementally after MVP validation.
+
+## Debug logging (Home Assistant)
+
+To increase integration logs during troubleshooting, add this block in `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.foxess_ha_v2: debug
+```
