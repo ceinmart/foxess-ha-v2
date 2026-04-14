@@ -1,0 +1,71 @@
+{
+  "source_file": "005.foxess.all.endpoints.codegen.json",
+  "group_count": 13,
+  "groups": [
+    {
+      "group": "Power Station",
+      "file": "006.foxess.group.power_station.codegen.json",
+      "endpoint_count": 5
+    },
+    {
+      "group": "Inverter-V1",
+      "file": "007.foxess.group.inverter_v1.codegen.json",
+      "endpoint_count": 2
+    },
+    {
+      "group": "Inverter",
+      "file": "008.foxess.group.inverter.codegen.json",
+      "endpoint_count": 26
+    },
+    {
+      "group": "Scheduler-V3",
+      "file": "009.foxess.group.scheduler_v3.codegen.json",
+      "endpoint_count": 2
+    },
+    {
+      "group": "Scheduler-V2",
+      "file": "010.foxess.group.scheduler_v2.codegen.json",
+      "endpoint_count": 2
+    },
+    {
+      "group": "Scheduler-V1",
+      "file": "011.foxess.group.scheduler_v1.codegen.json",
+      "endpoint_count": 4
+    },
+    {
+      "group": "Scheduler",
+      "file": "012.foxess.group.scheduler.codegen.json",
+      "endpoint_count": 4
+    },
+    {
+      "group": "Data Logger",
+      "file": "013.foxess.group.data_logger.codegen.json",
+      "endpoint_count": 4
+    },
+    {
+      "group": "EMS",
+      "file": "014.foxess.group.ems.codegen.json",
+      "endpoint_count": 15
+    },
+    {
+      "group": "Meter",
+      "file": "015.foxess.group.meter.codegen.json",
+      "endpoint_count": 3
+    },
+    {
+      "group": "Heat",
+      "file": "016.foxess.group.heat.codegen.json",
+      "endpoint_count": 3
+    },
+    {
+      "group": "GMAX",
+      "file": "017.foxess.group.gmax.codegen.json",
+      "endpoint_count": 5
+    },
+    {
+      "group": "Platform interface",
+      "file": "018.foxess.group.platform_interface.codegen.json",
+      "endpoint_count": 2
+    }
+  ]
+}

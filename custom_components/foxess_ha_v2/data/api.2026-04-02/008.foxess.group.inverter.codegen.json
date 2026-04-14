@@ -1,0 +1,5058 @@
+{
+  "api_name": "FoxESS Open API",
+  "base_url": "https://www.foxesscloud.com",
+  "format_version": "codegen-v1",
+  "group": "Inverter",
+  "endpoint_count": 26,
+  "endpoints": [
+    {
+      "group": "Inverter",
+      "title": "Get device list",
+      "path": "/op/v0/device/list",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Obtain the list of inverters owned by this account    ``` {   \"currentPage\": 1,   \"pageSize\": 10 } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "currentPage",
+            "path": "currentPage",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "default": "1",
+            "description": "Current page number",
+            "other_information": "Minimum value: 1",
+            "minimum": 1
+          },
+          {
+            "order": 2,
+            "name": "pageSize",
+            "path": "pageSize",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "default": "10",
+            "description": "The amount of data presented per page",
+            "other_information": "Minimum value: 10",
+            "minimum": 10
+          }
+        ],
+        "body_example": "{\n  \"currentPage\": 1,\n  \"pageSize\": 10\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ currentPage",
+            "path": "├─ currentPage",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Current page number"
+          },
+          {
+            "order": 4,
+            "name": "├─ pageSize",
+            "path": "├─ pageSize",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "The amount of data presented per page"
+          },
+          {
+            "order": 5,
+            "name": "├─ total",
+            "path": "├─ total",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Data volume total"
+          },
+          {
+            "order": 6,
+            "name": "├─ data",
+            "path": "├─ data",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 7,
+            "name": "├─ deviceSN",
+            "path": "├─ deviceSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the inverter"
+          },
+          {
+            "order": 8,
+            "name": "├─ moduleSN",
+            "path": "├─ moduleSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the Data Logger"
+          },
+          {
+            "order": 9,
+            "name": "├─ stationID",
+            "path": "├─ stationID",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Id of power station"
+          },
+          {
+            "order": 10,
+            "name": "├─ stationName",
+            "path": "├─ stationName",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Name of power station"
+          },
+          {
+            "order": 11,
+            "name": "├─ status",
+            "path": "├─ status",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Status of module",
+            "other_information": "Enumeration: 1,2,3  Enumeration note: 1:online 2:fault 3:offline",
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ],
+            "enum_descriptions": "1:online 2:fault 3:offline"
+          },
+          {
+            "order": 12,
+            "name": "├─ hasPV",
+            "path": "├─ hasPV",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Is there a photovoltaic system available"
+          },
+          {
+            "order": 13,
+            "name": "├─ hasBattery",
+            "path": "├─ hasBattery",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Is there a battery available"
+          },
+          {
+            "order": 14,
+            "name": "├─ deviceType",
+            "path": "├─ deviceType",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Model of device"
+          },
+          {
+            "order": 15,
+            "name": "├─ productType",
+            "path": "├─ productType",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Series of product"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get device detail (Deprecated)",
+      "path": "/op/v0/device/detail",
+      "method": "GET",
+      "deprecated": true,
+      "description": "Obtain inverter details",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [
+          {
+            "order": 1,
+            "name": "sn",
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          }
+        ],
+        "body": [],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ deviceSN",
+            "path": "├─ deviceSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ moduleSN",
+            "path": "├─ moduleSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the collector"
+          },
+          {
+            "order": 5,
+            "name": "├─ stationID",
+            "path": "├─ stationID",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Id of power station"
+          },
+          {
+            "order": 6,
+            "name": "├─ stationName",
+            "path": "├─ stationName",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Name of power station"
+          },
+          {
+            "order": 7,
+            "name": "├─ afciVersion",
+            "path": "├─ afciVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of afci"
+          },
+          {
+            "order": 8,
+            "name": "├─ managerVersion",
+            "path": "├─ managerVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of manager"
+          },
+          {
+            "order": 9,
+            "name": "├─ masterVersion",
+            "path": "├─ masterVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of master"
+          },
+          {
+            "order": 10,
+            "name": "├─ slaveVersion",
+            "path": "├─ slaveVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of slave"
+          },
+          {
+            "order": 11,
+            "name": "├─ hardwareVersion",
+            "path": "├─ hardwareVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of hardware"
+          },
+          {
+            "order": 12,
+            "name": "├─ status",
+            "path": "├─ status",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Status of device",
+            "other_information": "Enumeration: 1,2,3  Enumeration note: 1:online 2:breakdown 3:offline",
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ],
+            "enum_descriptions": "1:online 2:breakdown 3:offline"
+          },
+          {
+            "order": 13,
+            "name": "├─ capacity",
+            "path": "├─ capacity",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Capacity of device(in kW)"
+          },
+          {
+            "order": 14,
+            "name": "├─ function",
+            "path": "├─ function",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "Functional support"
+          },
+          {
+            "order": 15,
+            "name": "├─ scheduler",
+            "path": "├─ scheduler",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Whether the periodic mode switchover function is supported"
+          },
+          {
+            "order": 16,
+            "name": "├─ batteryList",
+            "path": "├─ batteryList",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 17,
+            "name": "├─ batterySN",
+            "path": "├─ batterySN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the battery"
+          },
+          {
+            "order": 18,
+            "name": "├─ type",
+            "path": "├─ type",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Master Slave Type of the battery"
+          },
+          {
+            "order": 19,
+            "name": "├─ version",
+            "path": "├─ version",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of the battery"
+          },
+          {
+            "order": 20,
+            "name": "├─ model",
+            "path": "├─ model",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "model of the battery"
+          },
+          {
+            "order": 21,
+            "name": "├─ capicty",
+            "path": "├─ capicty",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "capicty of the battery"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get available variables",
+      "path": "/op/v0/device/variable/get",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain variable tables for use by real-time data and historical data interfaces",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "other_information": "format: binary",
+            "format": "binary"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 3,
+            "name": "├─ {variable}",
+            "path": "├─ {variable}",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 4,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "unit"
+          },
+          {
+            "order": 5,
+            "name": "├─ name",
+            "path": "├─ name",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "variable name"
+          },
+          {
+            "order": 6,
+            "name": "├─ zh\\_CN",
+            "path": "├─ zh\\_CN",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 7,
+            "name": "├─ en",
+            "path": "├─ en",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 8,
+            "name": "├─ de",
+            "path": "├─ de",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 9,
+            "name": "├─ pt",
+            "path": "├─ pt",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 10,
+            "name": "├─ fr",
+            "path": "├─ fr",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 11,
+            "name": "├─ pl",
+            "path": "├─ pl",
+            "level": 0,
+            "type": "string",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get error code information",
+      "path": "/op/v0/device/fault/get",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain error code information",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "other_information": "format: binary",
+            "format": "binary"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 3,
+            "name": "├─ {errNo}",
+            "path": "├─ {errNo}",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "Error code"
+          },
+          {
+            "order": 4,
+            "name": "├─ en",
+            "path": "├─ en",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The error code corresponds in English"
+          },
+          {
+            "order": 5,
+            "name": "├─ zh\\_CN",
+            "path": "├─ zh\\_CN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The error code corresponds in Chinese"
+          },
+          {
+            "order": 6,
+            "name": "├─ pl",
+            "path": "├─ pl",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The error code corresponds in Polish"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get device real-time data (Deprecated)",
+      "path": "/op/v0/device/real/query",
+      "method": "POST",
+      "deprecated": true,
+      "description": "Get the latest real-time data of the inverter, and get the real-time data of all devices under the name without specifying the SN    ``` {   \"sn\": \"***************\",   \"variables\": [\"pvPower\",\"pv1Current\"] } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "variables",
+            "path": "variables",
+            "level": 0,
+            "type": "string []",
+            "required": false,
+            "description": "If this parameter is not passed, all variable data is obtained by default item type: string",
+            "other_information": "item Type: string",
+            "item_type": "string"
+          },
+          {
+            "order": 2,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false,
+            "description": "Variable name Available variables can be queried through the Get Variables interface Remark:Variable name,available variables can be queried through the Get Variables interface"
+          },
+          {
+            "order": 3,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Serial Number of Inverter If no parameter is specified, all devices are obtained"
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"***************\",\n  \"variables\": [\"pvPower\",\"pv1Current\"]\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 3,
+            "name": "├─ deviceSN",
+            "path": "├─ deviceSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial Number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ datas",
+            "path": "├─ datas",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 5,
+            "name": "├─ variable",
+            "path": "├─ variable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Variable name If the data is not found, it will not be returned"
+          },
+          {
+            "order": 6,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Unit"
+          },
+          {
+            "order": 7,
+            "name": "├─ name",
+            "path": "├─ name",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Name in English"
+          },
+          {
+            "order": 8,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Value"
+          },
+          {
+            "order": 9,
+            "name": "├─ time",
+            "path": "├─ time",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Time of Data Update, utc time"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get device history data",
+      "path": "/op/v0/device/history/query",
+      "method": "POST",
+      "deprecated": false,
+      "description": "The historical data within the specified 24 hours can be obtained（The begin time and end time are required). If no time period is specified, you can obtain the historical data of the last three days.    ``` {   \"sn\": \"***************\",   \"variables\": [\"pvPower\",\"pv1Current\"],   \"begin\": 1703548800000,   \"end\": 1703635200000 } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "variables",
+            "path": "variables",
+            "level": 0,
+            "type": "string []",
+            "required": false,
+            "description": "If this parameter is not passed, all variable data is obtained by default",
+            "other_information": "item Type: string",
+            "item_type": "string"
+          },
+          {
+            "order": 2,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false,
+            "description": "Variable name Available variables can be queried through the Get Variables interface Remark:Variable name,available variables can be queried through the Get Variables interface"
+          },
+          {
+            "order": 3,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial Number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "begin",
+            "path": "begin",
+            "level": 0,
+            "type": "number",
+            "required": false,
+            "description": "Start timestamp(milliseconds)",
+            "unit": "milliseconds"
+          },
+          {
+            "order": 5,
+            "name": "end",
+            "path": "end",
+            "level": 0,
+            "type": "number",
+            "required": false,
+            "description": "End timestamp(milliseconds)",
+            "unit": "milliseconds"
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"***************\",\n  \"variables\": [\"pvPower\",\"pv1Current\"],\n  \"begin\": 1703548800000,\n  \"end\": 1703635200000\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 3,
+            "name": "├─ deviceSN",
+            "path": "├─ deviceSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial Number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ datas",
+            "path": "├─ datas",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 5,
+            "name": "├─ variable",
+            "path": "├─ variable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Variable name"
+          },
+          {
+            "order": 6,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Unit of variable"
+          },
+          {
+            "order": 7,
+            "name": "├─ name",
+            "path": "├─ name",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Name in English"
+          },
+          {
+            "order": 8,
+            "name": "├─ data",
+            "path": "├─ data",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 9,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Value"
+          },
+          {
+            "order": 10,
+            "name": "├─ time",
+            "path": "├─ time",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Time of Data Update, utc time"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get device production report",
+      "path": "/op/v0/device/report/query",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Obtain the inverter electricity consumption report. Calculated according to the time zone of the power station to which the inverter belongs.The monthly electricity consumption of the year is obtained, the daily electricity consumption of the month is obtained, and the hourly electricity consumption of the day is obtained    ``` {   \"sn\": \"***************\",   \"year\": 2023,   \"month\": 10,   \"day\": 3,   \"dimension\": \"day\",   \"variables\": [\"generation\",\"feedin\",\"gridConsumption\",\"chargeEnergyToTal\",\"dischargeEnergyToTal\",\"PVEnergyTotal\"] } {   \"sn\": \"***************\",   \"year\": 2023,   \"month\": 10,   \"dimension\": \"month\",   \"variables\": [\"generation\",\"feedin\",\"gridConsumption\",\"chargeEnergyToTal\",\"dischargeEnergyToTal\",\"PVEnergyTotal\"] } {   \"sn\": \"***************\",   \"year\": 2023,   \"dimension\": \"year\",   \"variables\": [\"generation\",\"feedin\",\"gridConsumption\",\"chargeEnergyToTal\",\"dischargeEnergyToTal\"] } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the inverter"
+          },
+          {
+            "order": 2,
+            "name": "year",
+            "path": "year",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "year",
+            "other_information": "Minimum value: 2020",
+            "minimum": 2020
+          },
+          {
+            "order": 3,
+            "name": "month",
+            "path": "month",
+            "level": 0,
+            "type": "integer",
+            "required": false,
+            "description": "month",
+            "other_information": "Maximum value: 12  Minimum value: 1",
+            "minimum": 1,
+            "maximum": 12
+          },
+          {
+            "order": 4,
+            "name": "day",
+            "path": "day",
+            "level": 0,
+            "type": "integer",
+            "required": false,
+            "description": "day",
+            "other_information": "Maximum value: 31  Minimum value: 1",
+            "minimum": 1,
+            "maximum": 31
+          },
+          {
+            "order": 5,
+            "name": "dimension",
+            "path": "dimension",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Statistical dimension",
+            "other_information": "Enumeration: year,month,day",
+            "enum": [
+              "year",
+              "month",
+              "day"
+            ]
+          },
+          {
+            "order": 6,
+            "name": "variables",
+            "path": "variables",
+            "level": 0,
+            "type": "string []",
+            "required": true,
+            "description": "Query variable",
+            "other_information": "item Type: string",
+            "item_type": "string"
+          },
+          {
+            "order": 7,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"***************\",\n  \"year\": 2023,\n  \"month\": 10,\n  \"day\": 3,\n  \"dimension\": \"day\",\n  \"variables\": [\"generation\",\"feedin\",\"gridConsumption\",\"chargeEnergyToTal\",\"dischargeEnergyToTal\",\"PVEnergyTotal\"]\n}\n{\n  \"sn\": \"***************\",\n  \"year\": 2023,\n  \"month\": 10,\n  \"dimension\": \"month\",\n  \"variables\": [\"generation\",\"feedin\",\"gridConsumption\",\"chargeEnergyToTal\",\"dischargeEnergyToTal\",\"PVEnergyTotal\"]\n}\n{\n  \"sn\": \"***************\",\n  \"year\": 2023,\n  \"dimension\": \"year\",\n  \"variables\": [\"generation\",\"feedin\",\"gridConsumption\",\"chargeEnergyToTal\",\"dischargeEnergyToTal\"]\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 3,
+            "name": "├─ variable",
+            "path": "├─ variable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Variable name"
+          },
+          {
+            "order": 4,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Variable unit"
+          },
+          {
+            "order": 5,
+            "name": "├─ values",
+            "path": "├─ values",
+            "level": 0,
+            "type": "number []",
+            "required": true,
+            "description": "Variable value",
+            "other_information": "item Type: number",
+            "item_type": "number"
+          },
+          {
+            "order": 6,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get device power generation",
+      "path": "/op/v0/device/generation",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain the energy yield information of the inverter based on the time zone of the power station to which the inverter belongs",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [
+          {
+            "order": 1,
+            "name": "sn",
+            "type": "string",
+            "required": true,
+            "description": "Serial number of inverter"
+          }
+        ],
+        "body": [],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ today",
+            "path": "├─ today",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Electricity generation of this today unit:kWh",
+            "unit": "kWh"
+          },
+          {
+            "order": 4,
+            "name": "├─ month",
+            "path": "├─ month",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Electricity generation of this month unit:kWh",
+            "unit": "kWh"
+          },
+          {
+            "order": 5,
+            "name": "├─ cumulative",
+            "path": "├─ cumulative",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Cumulative power generation unit:kWh",
+            "unit": "kWh"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get the minimum soc settings for the battery of device",
+      "path": "/op/v0/device/battery/soc/get",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain the inverter battery soc Settings",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [
+          {
+            "order": 1,
+            "name": "sn",
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          }
+        ],
+        "body": [],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ minSoc",
+            "path": "├─ minSoc",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Minimum soc of system"
+          },
+          {
+            "order": 4,
+            "name": "├─ minSocOnGrid",
+            "path": "├─ minSocOnGrid",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Battery discharge cutoff SOC in grid-connected state"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set the minmum soc for the battery of the device",
+      "path": "/op/v0/device/battery/soc/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Set the minmum soc for the battery of the device    ``` {   \"sn\": \"***************\",   \"minSoc\": 10,   \"minSocOnGrid\": 10 } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of inverter"
+          },
+          {
+            "order": 2,
+            "name": "minSoc",
+            "path": "minSoc",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Minimum soc of system",
+            "other_information": "Maximum value: 100  Minimum value: 10",
+            "minimum": 10,
+            "maximum": 100
+          },
+          {
+            "order": 3,
+            "name": "minSocOnGrid",
+            "path": "minSocOnGrid",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Battery discharge cutoff SOC in grid-connected state",
+            "other_information": "Maximum value: 100  Minimum value: 10",
+            "minimum": 10,
+            "maximum": 100
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"***************\",\n  \"minSoc\": 10,\n  \"minSocOnGrid\": 10\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get the setting of battery charging time",
+      "path": "/op/v0/device/battery/forceChargeTime/get",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain the setting of battery charging time",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [
+          {
+            "order": 1,
+            "name": "sn",
+            "type": "string",
+            "required": true,
+            "description": "Serial number of inverter"
+          }
+        ],
+        "body": [],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ enable1",
+            "path": "├─ enable1",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Whether the first segment is enabled"
+          },
+          {
+            "order": 4,
+            "name": "├─ startTime1",
+            "path": "├─ startTime1",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The first period starts time"
+          },
+          {
+            "order": 5,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 6,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 7,
+            "name": "├─ endTime1",
+            "path": "├─ endTime1",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The end time of the first period"
+          },
+          {
+            "order": 8,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 9,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 10,
+            "name": "├─ enable2",
+            "path": "├─ enable2",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Whether the second segment is enabled or not"
+          },
+          {
+            "order": 11,
+            "name": "├─ startTime2",
+            "path": "├─ startTime2",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The second period starts time"
+          },
+          {
+            "order": 12,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 13,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 14,
+            "name": "├─ endTime2",
+            "path": "├─ endTime2",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The end time of the second period"
+          },
+          {
+            "order": 15,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 16,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set the battery charging time",
+      "path": "/op/v0/device/battery/forceChargeTime/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Set the battery charging time. The period must be two periods. Both periods must be delivered   request body : ``` {   \"sn\": \"sn_4e50c9b8a5c3\",   \"enable1\": false,   \"enable2\": false,   \"startTime1\": {     \"hour\": 0,     \"minute\": 0   },   \"endTime1\": {     \"hour\": 0,     \"minute\": 0   },   \"startTime2\": {     \"hour\": 0,     \"minute\": 0   },   \"endTime2\": {     \"hour\": 0,     \"minute\": 0   } } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 2,
+            "name": "enable1",
+            "path": "enable1",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Whether the first segment is enabled"
+          },
+          {
+            "order": 3,
+            "name": "enable2",
+            "path": "enable2",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Whether the second segment is enabled or not"
+          },
+          {
+            "order": 4,
+            "name": "startTime1",
+            "path": "startTime1",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The first period starts time"
+          },
+          {
+            "order": 5,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 6,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          },
+          {
+            "order": 7,
+            "name": "endTime1",
+            "path": "endTime1",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The end time of the first period"
+          },
+          {
+            "order": 8,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 9,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          },
+          {
+            "order": 10,
+            "name": "startTime2",
+            "path": "startTime2",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The second period starts time"
+          },
+          {
+            "order": 11,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 12,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          },
+          {
+            "order": 13,
+            "name": "endTime2",
+            "path": "endTime2",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "The end time of the second period"
+          },
+          {
+            "order": 14,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 15,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"sn_4e50c9b8a5c3\",\n  \"enable1\": false,\n  \"enable2\": false,\n  \"startTime1\": {\n    \"hour\": 0,\n    \"minute\": 0\n  },\n  \"endTime1\": {\n    \"hour\": 0,\n    \"minute\": 0\n  },\n  \"startTime2\": {\n    \"hour\": 0,\n    \"minute\": 0\n  },\n  \"endTime2\": {\n    \"hour\": 0,\n    \"minute\": 0\n  }\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ enable1",
+            "path": "├─ enable1",
+            "level": 0,
+            "type": "boolean",
+            "required": false,
+            "description": "Whether the first segment is enabled"
+          },
+          {
+            "order": 5,
+            "name": "├─ enable2",
+            "path": "├─ enable2",
+            "level": 0,
+            "type": "boolean",
+            "required": false,
+            "description": "Whether the second segment is enabled or not"
+          },
+          {
+            "order": 6,
+            "name": "├─ startTime1",
+            "path": "├─ startTime1",
+            "level": 0,
+            "type": "object",
+            "required": false,
+            "description": "The first period starts time"
+          },
+          {
+            "order": 7,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 8,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          },
+          {
+            "order": 9,
+            "name": "├─ endTime1",
+            "path": "├─ endTime1",
+            "level": 0,
+            "type": "object",
+            "required": false,
+            "description": "The end time of the first period"
+          },
+          {
+            "order": 10,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 11,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          },
+          {
+            "order": 12,
+            "name": "├─ startTime2",
+            "path": "├─ startTime2",
+            "level": 0,
+            "type": "object",
+            "required": false,
+            "description": "The second period starts time"
+          },
+          {
+            "order": 13,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 14,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          },
+          {
+            "order": 15,
+            "name": "├─ endTime2",
+            "path": "├─ endTime2",
+            "level": 0,
+            "type": "object",
+            "required": false,
+            "description": "The end time of the second period"
+          },
+          {
+            "order": 16,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 23  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 23
+          },
+          {
+            "order": 17,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "other_information": "Maximum value: 59  Minimum value: 0",
+            "minimum": 0,
+            "maximum": 59
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get the device settings item",
+      "path": "/op/v0/device/setting/get",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Obtain the device settings   request body : ``` {   \"sn\": \"sn_4e50c9b8a5c3\",   \"key\": \"ExportLimit\" } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 2,
+            "name": "key",
+            "path": "key",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "settings item",
+            "other_information": "Enumeration: ExportLimit,MinSoc,MinSocOnGrid,MaxSoc,GridCode,WorkMode,ActivePowerLimit,ExportLimitPower,EpsOutPut,MaxSetChargeCurrent,MaxSetDischargeCurrent,ECOMode,Meter1Enable,Meter2Enable,SysSwitch,GroundProtection,LowPowerMode",
+            "enum": [
+              "ExportLimit",
+              "MinSoc",
+              "MinSocOnGrid",
+              "MaxSoc",
+              "GridCode",
+              "WorkMode",
+              "ActivePowerLimit",
+              "ExportLimitPower",
+              "EpsOutPut",
+              "MaxSetChargeCurrent",
+              "MaxSetDischargeCurrent",
+              "ECOMode",
+              "Meter1Enable",
+              "Meter2Enable",
+              "SysSwitch",
+              "GroundProtection",
+              "LowPowerMode"
+            ]
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"sn_4e50c9b8a5c3\",\n  \"key\": \"ExportLimit\"\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "setting value"
+          },
+          {
+            "order": 4,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "unit"
+          },
+          {
+            "order": 5,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "precision",
+            "other_information": "Enumeration: 1,0.1,0.01",
+            "enum": [
+              "1",
+              "0.1",
+              "0.01"
+            ]
+          },
+          {
+            "order": 6,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 7,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "minimum"
+          },
+          {
+            "order": 8,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "maximum"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set the device settings item",
+      "path": "/op/v0/device/setting/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Deliver device settings   request body : ``` {   \"sn\": \"sn_4e50c9b8a5c3\",   \"key\": \"ExportLimit\",   \"value\": \"13000\" } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 2,
+            "name": "key",
+            "path": "key",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "settings item",
+            "other_information": "Enumeration: ExportLimit,MinSoc,MinSocOnGrid,MaxSoc,GridCode,WorkMode,ActivePowerLimit,ExportLimitPower,EpsOutPut,MaxSetChargeCurrent,MaxSetDischargeCurrent,ECOMode,Meter1Enable,Meter2Enable,SysSwitch,GroundProtection,LowPowerMode",
+            "enum": [
+              "ExportLimit",
+              "MinSoc",
+              "MinSocOnGrid",
+              "MaxSoc",
+              "GridCode",
+              "WorkMode",
+              "ActivePowerLimit",
+              "ExportLimitPower",
+              "EpsOutPut",
+              "MaxSetChargeCurrent",
+              "MaxSetDischargeCurrent",
+              "ECOMode",
+              "Meter1Enable",
+              "Meter2Enable",
+              "SysSwitch",
+              "GroundProtection",
+              "LowPowerMode"
+            ]
+          },
+          {
+            "order": 3,
+            "name": "value",
+            "path": "value",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "settings value"
+          }
+        ],
+        "body_example": "{\n  \"sn\": \"sn_4e50c9b8a5c3\",\n  \"key\": \"ExportLimit\",\n  \"value\": \"13000\"\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ key",
+            "path": "├─ key",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "settings item",
+            "other_information": "Enumeration: ExportLimit,MinSoc,MinSocOnGrid,MaxSoc,GridCode,WorkMode,ActivePowerLimit,ExportLimitPower,EpsOutPut,MaxSetChargeCurrent,MaxSetDischargeCurrent,ECOMode,Meter1Enable,Meter2Enable,SysSwitch,GroundProtection",
+            "enum": [
+              "ExportLimit",
+              "MinSoc",
+              "MinSocOnGrid",
+              "MaxSoc",
+              "GridCode",
+              "WorkMode",
+              "ActivePowerLimit",
+              "ExportLimitPower",
+              "EpsOutPut",
+              "MaxSetChargeCurrent",
+              "MaxSetDischargeCurrent",
+              "ECOMode",
+              "Meter1Enable",
+              "Meter2Enable",
+              "SysSwitch",
+              "GroundProtection"
+            ]
+          },
+          {
+            "order": 5,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "settings value"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get the device time",
+      "path": "/op/v0/device/time/get",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ year",
+            "path": "├─ year",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 4,
+            "name": "├─ month",
+            "path": "├─ month",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 5,
+            "name": "├─ day",
+            "path": "├─ day",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 6,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 7,
+            "name": "├─ second",
+            "path": "├─ second",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 8,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "string",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set the device time",
+      "path": "/op/v0/device/time/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Modify the device time   **Note that the device's automatic time synchronization function will be disabled after modification**",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 2,
+            "name": "year",
+            "path": "year",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "second",
+            "path": "second",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "0-59"
+          },
+          {
+            "order": 4,
+            "name": "minute",
+            "path": "minute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "0-59"
+          },
+          {
+            "order": 5,
+            "name": "hour",
+            "path": "hour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "0-23"
+          },
+          {
+            "order": 6,
+            "name": "day",
+            "path": "day",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "1-31"
+          },
+          {
+            "order": 7,
+            "name": "month",
+            "path": "month",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "1-12"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ year",
+            "path": "├─ year",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 5,
+            "name": "├─ second",
+            "path": "├─ second",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "0-59"
+          },
+          {
+            "order": 6,
+            "name": "├─ minute",
+            "path": "├─ minute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "0-59"
+          },
+          {
+            "order": 7,
+            "name": "├─ hour",
+            "path": "├─ hour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "0-23"
+          },
+          {
+            "order": 8,
+            "name": "├─ day",
+            "path": "├─ day",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "1-31"
+          },
+          {
+            "order": 9,
+            "name": "├─ month",
+            "path": "├─ month",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "1-12"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get the device peakshaving settings",
+      "path": "/op/v0/device/peakShaving/get",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ importLimit",
+            "path": "├─ importLimit",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 4,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "setting value"
+          },
+          {
+            "order": 5,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "unit"
+          },
+          {
+            "order": 6,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "precision",
+            "other_information": "Enumeration: 1,0.1,0.01",
+            "enum": [
+              "1",
+              "0.1",
+              "0.01"
+            ]
+          },
+          {
+            "order": 7,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 8,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "minimum"
+          },
+          {
+            "order": 9,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "maximum"
+          },
+          {
+            "order": 10,
+            "name": "├─ soc",
+            "path": "├─ soc",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 11,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "setting value"
+          },
+          {
+            "order": 12,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "unit"
+          },
+          {
+            "order": 13,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "precision",
+            "other_information": "Enumeration: 1,0.1,0.01",
+            "enum": [
+              "1",
+              "0.1",
+              "0.01"
+            ]
+          },
+          {
+            "order": 14,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 15,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "minimum"
+          },
+          {
+            "order": 16,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "maximum"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set the device peakshaving settings",
+      "path": "/op/v0/device/peakShaving/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 2,
+            "name": "importLimit",
+            "path": "importLimit",
+            "level": 0,
+            "type": "number",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "soc",
+            "path": "soc",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ importLimit",
+            "path": "├─ importLimit",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 5,
+            "name": "├─ soc",
+            "path": "├─ soc",
+            "level": 0,
+            "type": "integer",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get the Meter Reader",
+      "path": "/op/v0/device/getMeterReader",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ readerType",
+            "path": "├─ readerType",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Electric meter reader type",
+            "other_information": "Enumeration: 0,1,2,3,4,5,6,8,9,10,11,12  Enumeration note: Close meter reader connection, SolarmanPV, EARN-E, SHELLY, WIZARD, Chint, AECC, iometer, Shelly Pro EM-50, Powerfox, Shelly 3EM, Solakon",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12"
+            ],
+            "enum_descriptions": "Close meter reader connection, SolarmanPV, EARN-E, SHELLY, WIZARD, Chint, AECC, iometer, Shelly Pro EM-50, Powerfox, Shelly 3EM, Solakon"
+          },
+          {
+            "order": 4,
+            "name": "├─ readerStatus",
+            "path": "├─ readerStatus",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Electric meter reader status",
+            "other_information": "Enumeration: 0,1  Enumeration note: Electric meter data not obtained, Electric meter data has been obtained",
+            "enum": [
+              "0",
+              "1"
+            ],
+            "enum_descriptions": "Electric meter data not obtained, Electric meter data has been obtained"
+          },
+          {
+            "order": 5,
+            "name": "├─ readerInfo",
+            "path": "├─ readerInfo",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "Electric meter reader info"
+          },
+          {
+            "order": 6,
+            "name": "├─ ip",
+            "path": "├─ ip",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "ip address"
+          },
+          {
+            "order": 7,
+            "name": "├─ key",
+            "path": "├─ key",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "password for meter"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set the Meter Reader",
+      "path": "/op/v0/device/setMeterReader",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number"
+          },
+          {
+            "order": 2,
+            "name": "readerType",
+            "path": "readerType",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Electric meter reader type",
+            "other_information": "Enumeration: 0,1,2,3,4,5,6,8,9,10,11,12  Enumeration note: Close meter reader connection, SolarmanPV, EARN-E, SHELLY, WIZARD, Chint, AECC, iometer, Shelly Pro EM-50, Powerfox, Shelly 3EM, Solakon",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12"
+            ],
+            "enum_descriptions": "Close meter reader connection, SolarmanPV, EARN-E, SHELLY, WIZARD, Chint, AECC, iometer, Shelly Pro EM-50, Powerfox, Shelly 3EM, Solakon"
+          },
+          {
+            "order": 3,
+            "name": "readerInfo",
+            "path": "readerInfo",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "Electric meter reader info"
+          },
+          {
+            "order": 4,
+            "name": "├─ ip",
+            "path": "├─ ip",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "ip address"
+          },
+          {
+            "order": 5,
+            "name": "├─ key",
+            "path": "├─ key",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "password for meter"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Serial number"
+          },
+          {
+            "order": 4,
+            "name": "├─ readerType",
+            "path": "├─ readerType",
+            "level": 0,
+            "type": "number",
+            "required": false,
+            "description": "Electric meter reader type",
+            "other_information": "Enumeration: 0,1,2,3,4,5,6,8,9,10,11,12  Enumeration note: Close meter reader connection, SolarmanPV, EARN-E, SHELLY, WIZARD, Chint, AECC, iometer, Shelly Pro EM-50, Powerfox, Shelly 3EM, Solakon",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12"
+            ],
+            "enum_descriptions": "Close meter reader connection, SolarmanPV, EARN-E, SHELLY, WIZARD, Chint, AECC, iometer, Shelly Pro EM-50, Powerfox, Shelly 3EM, Solakon"
+          },
+          {
+            "order": 5,
+            "name": "├─ readerInfo",
+            "path": "├─ readerInfo",
+            "level": 0,
+            "type": "object",
+            "required": false,
+            "description": "Electric meter reader info"
+          },
+          {
+            "order": 6,
+            "name": "├─ ip",
+            "path": "├─ ip",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "ip address"
+          },
+          {
+            "order": 7,
+            "name": "├─ key",
+            "path": "├─ key",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "password for meter"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get battery heating Parameter",
+      "path": "/op/v0/device/batteryHeating/get",
+      "method": "POST",
+      "deprecated": false,
+      "description": "response body example: {       \"errno\": 0,       \"msg\": \"Operation successful\",       \"result\": {           \"dataList\": [               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time1EndHour\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 23.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"minEndTemperatureRange\",                   \"value\": \"10\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"maxStartTemperatureRange\",                   \"value\": \"9\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time2StartHour\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 23.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time1EndMinute\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 59.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time3StartHour\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 23.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"minStartTemperatureRange\",                   \"value\": \"1\"               },               {                   \"enumList\": [                       \"disable\",                       \"enable\"                   ],                   \"unit\": \"℃\",                   \"precision\": 1.0,                   \"name\": \"time2Enable\",                   \"value\": \"disable\"               },               {                   \"enumList\": [                       \"disable\",                       \"enable\"                   ],                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"batteryWarmUpFunctionEnableFlag\",                   \"value\": \"disable\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time3EndMinute\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 59.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time2EndHour\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 23.0                   },                   \"value\": \"0\"               },               {                   \"enumList\": [                       \"disable\",                       \"enable\"                   ],                   \"unit\": \"℃\",                   \"precision\": 1.0,                   \"name\": \"time3Enable\",                   \"value\": \"disable\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time1StartHour\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 23.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"℃\",                   \"precision\": 1.0,                   \"name\": \"startTemperature\",                   \"value\": \"1\"               },               {                   \"enumList\": [                       \"disable\",                       \"enable\"                   ],                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time1Enable\",                   \"value\": \"disable\"               },               {                   \"enumList\": [                       \"disable\",                       \"enable\"                   ],                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"batteryWarmUpEnable\",                   \"value\": \"disable\"               },               {                   \"unit\": \"℃\",                   \"precision\": 1.0,                   \"name\": \"endTemperature\",                   \"value\": \"10\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time3EndHour\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 23.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"maxEndTemperatureRange\",                   \"value\": \"15\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time2StartMinute\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 59.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time2EndMinute\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 59.0                   },                   \"value\": \"0\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time1StartMinute\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 59.0                   },                   \"value\": \"0\"               },               {                   \"enumList\": [                       \"The battery is in a stopped warm up state\",                       \"The battery is in a ready warm up state\",                       \"The battery is in the warm up state\",                       \"Battery is in self warm up state\",                       \"The battery is in a ready stopped warm up state\"                   ],                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"batteryWarmUpState\",                   \"value\": \"The battery is in a stopped warm up state\"               },               {                   \"unit\": \"\",                   \"precision\": 1.0,                   \"name\": \"time3StartMinute\",                   \"range\": {                       \"min\": 0.0,                       \"max\": 59.0                   },                   \"value\": \"0\"               }           ]       }   }",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 2,
+            "name": "msg",
+            "path": "msg",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 3,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 4,
+            "name": "├─ dataList",
+            "path": "├─ dataList",
+            "level": 0,
+            "type": "object []",
+            "required": false,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 5,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 6,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 7,
+            "name": "├─ name",
+            "path": "├─ name",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 8,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 9,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 10,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 11,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 12,
+            "name": "├─ enumList",
+            "path": "├─ enumList",
+            "level": 0,
+            "type": "string []",
+            "required": false,
+            "other_information": "item Type: string",
+            "item_type": "string"
+          },
+          {
+            "order": 13,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set battery heating Parameter",
+      "path": "/op/v0/device/batteryHeating/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "response body example:   {       \"errno\": 0,       \"msg\": \"Operation successful\",       \"result\": **null**   }",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "device sn"
+          },
+          {
+            "order": 2,
+            "name": "batteryWarmUpEnable",
+            "path": "batteryWarmUpEnable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Battery warm up enable"
+          },
+          {
+            "order": 3,
+            "name": "startTemperature",
+            "path": "startTemperature",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start temperature"
+          },
+          {
+            "order": 4,
+            "name": "endTemperature",
+            "path": "endTemperature",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "End temperature"
+          },
+          {
+            "order": 5,
+            "name": "time1Enable",
+            "path": "time1Enable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Time1 enable"
+          },
+          {
+            "order": 6,
+            "name": "time1StartHour",
+            "path": "time1StartHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start time1 - hour"
+          },
+          {
+            "order": 7,
+            "name": "time1StartMinute",
+            "path": "time1StartMinute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start time1 - minute"
+          },
+          {
+            "order": 8,
+            "name": "time1EndHour",
+            "path": "time1EndHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Ending time1 - hour"
+          },
+          {
+            "order": 9,
+            "name": "time1EndMinute",
+            "path": "time1EndMinute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Ending time1 - minute"
+          },
+          {
+            "order": 10,
+            "name": "time2Enable",
+            "path": "time2Enable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Time2 Enable"
+          },
+          {
+            "order": 11,
+            "name": "time2StartHour",
+            "path": "time2StartHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start time2 - hour"
+          },
+          {
+            "order": 12,
+            "name": "time2StartMinute",
+            "path": "time2StartMinute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start time2 - minute"
+          },
+          {
+            "order": 13,
+            "name": "time2EndHour",
+            "path": "time2EndHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Ending time2 - hour"
+          },
+          {
+            "order": 14,
+            "name": "time2EndMinute",
+            "path": "time2EndMinute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Ending time2 - minute"
+          },
+          {
+            "order": 15,
+            "name": "time3Enable",
+            "path": "time3Enable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Time3 enable"
+          },
+          {
+            "order": 16,
+            "name": "time3StartHour",
+            "path": "time3StartHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start time3 - hour"
+          },
+          {
+            "order": 17,
+            "name": "time3StartMinute",
+            "path": "time3StartMinute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Start time3 - minute"
+          },
+          {
+            "order": 18,
+            "name": "time3EndHour",
+            "path": "time3EndHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Ending time3 - hour"
+          },
+          {
+            "order": 19,
+            "name": "time3EndMinute",
+            "path": "time3EndMinute",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Ending time3 - minute"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "msg",
+            "path": "msg",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "title"
+          },
+          {
+            "order": 4,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "device sn"
+          },
+          {
+            "order": 5,
+            "name": "├─ batteryWarmUpEnable",
+            "path": "├─ batteryWarmUpEnable",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Battery warm up enable"
+          },
+          {
+            "order": 6,
+            "name": "├─ startTemperature",
+            "path": "├─ startTemperature",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start temperature"
+          },
+          {
+            "order": 7,
+            "name": "├─ endTemperature",
+            "path": "├─ endTemperature",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "End temperature"
+          },
+          {
+            "order": 8,
+            "name": "├─ time1Enable",
+            "path": "├─ time1Enable",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Time1 enable"
+          },
+          {
+            "order": 9,
+            "name": "├─ time1StartHour",
+            "path": "├─ time1StartHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start time1 - hour"
+          },
+          {
+            "order": 10,
+            "name": "├─ time1StartMinute",
+            "path": "├─ time1StartMinute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start time1 - minute"
+          },
+          {
+            "order": 11,
+            "name": "├─ time1EndHour",
+            "path": "├─ time1EndHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Ending time1 - hour"
+          },
+          {
+            "order": 12,
+            "name": "├─ time1EndMinute",
+            "path": "├─ time1EndMinute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Ending time1 - minute"
+          },
+          {
+            "order": 13,
+            "name": "├─ time2Enable",
+            "path": "├─ time2Enable",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Time2 Enable"
+          },
+          {
+            "order": 14,
+            "name": "├─ time2StartHour",
+            "path": "├─ time2StartHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start time2 - hour"
+          },
+          {
+            "order": 15,
+            "name": "├─ time2StartMinute",
+            "path": "├─ time2StartMinute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start time2 - minute"
+          },
+          {
+            "order": 16,
+            "name": "├─ time2EndHour",
+            "path": "├─ time2EndHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Ending time2 - hour"
+          },
+          {
+            "order": 17,
+            "name": "├─ time2EndMinute",
+            "path": "├─ time2EndMinute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Ending time2 - minute"
+          },
+          {
+            "order": 18,
+            "name": "├─ time3Enable",
+            "path": "├─ time3Enable",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Time3 enable"
+          },
+          {
+            "order": 19,
+            "name": "├─ time3StartHour",
+            "path": "├─ time3StartHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start time3 - hour"
+          },
+          {
+            "order": 20,
+            "name": "├─ time3StartMinute",
+            "path": "├─ time3StartMinute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Start time3 - minute"
+          },
+          {
+            "order": 21,
+            "name": "├─ time3EndHour",
+            "path": "├─ time3EndHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Ending time3 - hour"
+          },
+          {
+            "order": 22,
+            "name": "├─ time3EndMinute",
+            "path": "├─ time3EndMinute",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Ending time3 - minute"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get display sleep Paeameter",
+      "path": "/op/v0/device/displaySleep/get",
+      "method": "POST",
+      "deprecated": false,
+      "description": "response body example:      {       \"errno\": 0,       \"msg\": \"Operation successful\",       \"result\": {           \"displaySleepMode\": {               \"unit\": \"\",               \"precision\": 1.0,               \"range\": {                   \"min\": 0.0,                   \"max\": 1.0               },               \"value\": \"true\"           },           \"displaySleepModeStartTimeHour\": {               \"unit\": \"\",               \"precision\": 1.0,               \"range\": {                   \"min\": 0.0,                   \"max\": 23.0               },               \"value\": \"1\"           },           \"displaySleepModeEndTimeHour\": {               \"unit\": \"\",               \"precision\": 1.0,               \"range\": {                   \"min\": 0.0,                   \"max\": 23.0               },               \"value\": \"5\"           },           \"displaySleepModeEndTimeMin\": {               \"unit\": \"\",               \"precision\": 1.0,               \"range\": {                   \"min\": 0.0,                   \"max\": 59.0               },               \"value\": \"30\"           },           \"displaySleepModeStartTimeMin\": {               \"unit\": \"\",               \"precision\": 1.0,               \"range\": {                   \"min\": 0.0,                   \"max\": 59.0               },               \"value\": \"10\"           }       }   }",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "device sn"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 2,
+            "name": "msg",
+            "path": "msg",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 3,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 4,
+            "name": "├─ displaySleepMode",
+            "path": "├─ displaySleepMode",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 5,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 6,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 7,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 8,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 9,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 10,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 11,
+            "name": "├─ displaySleepModeStartTimeHour",
+            "path": "├─ displaySleepModeStartTimeHour",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 12,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 13,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 14,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 15,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 16,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 17,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 18,
+            "name": "├─ displaySleepModeEndTimeHour",
+            "path": "├─ displaySleepModeEndTimeHour",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 19,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 20,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 21,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 22,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 23,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 24,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 25,
+            "name": "├─ displaySleepModeEndTimeMin",
+            "path": "├─ displaySleepModeEndTimeMin",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 26,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 27,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 28,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 29,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 30,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 31,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 32,
+            "name": "├─ displaySleepModeStartTimeMin",
+            "path": "├─ displaySleepModeStartTimeMin",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 33,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": false
+          },
+          {
+            "order": 34,
+            "name": "├─ precision",
+            "path": "├─ precision",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 35,
+            "name": "├─ range",
+            "path": "├─ range",
+            "level": 0,
+            "type": "object",
+            "required": false
+          },
+          {
+            "order": 36,
+            "name": "├─ min",
+            "path": "├─ min",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 37,
+            "name": "├─ max",
+            "path": "├─ max",
+            "level": 0,
+            "type": "number",
+            "required": false
+          },
+          {
+            "order": 38,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "string",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set display sleep Paeameter",
+      "path": "/op/v0/device/displaySleep/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Device sn"
+          },
+          {
+            "order": 2,
+            "name": "displaySleepMode",
+            "path": "displaySleepMode",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Sleep mode"
+          },
+          {
+            "order": 3,
+            "name": "displaySleepModeStartTimeHour",
+            "path": "displaySleepModeStartTimeHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The start time of SleepMode is hours"
+          },
+          {
+            "order": 4,
+            "name": "displaySleepModeStartTimeMin",
+            "path": "displaySleepModeStartTimeMin",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The start time of SleepMode is minutes"
+          },
+          {
+            "order": 5,
+            "name": "displaySleepModeEndTimeHour",
+            "path": "displaySleepModeEndTimeHour",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The end time of SleepMode is hours"
+          },
+          {
+            "order": 6,
+            "name": "displaySleepModeEndTimeMin",
+            "path": "displaySleepModeEndTimeMin",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "The end time of SleepMode is minutes"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Device sn"
+          },
+          {
+            "order": 4,
+            "name": "├─ displaySleepMode",
+            "path": "├─ displaySleepMode",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "Sleep mode"
+          },
+          {
+            "order": 5,
+            "name": "├─ displaySleepModeStartTimeHour",
+            "path": "├─ displaySleepModeStartTimeHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "The start time of SleepMode is hours"
+          },
+          {
+            "order": 6,
+            "name": "├─ displaySleepModeStartTimeMin",
+            "path": "├─ displaySleepModeStartTimeMin",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "The start time of SleepMode is minutes"
+          },
+          {
+            "order": 7,
+            "name": "├─ displaySleepModeEndTimeHour",
+            "path": "├─ displaySleepModeEndTimeHour",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "The end time of SleepMode is hours"
+          },
+          {
+            "order": 8,
+            "name": "├─ displaySleepModeEndTimeMin",
+            "path": "├─ displaySleepModeEndTimeMin",
+            "level": 0,
+            "type": "string",
+            "required": false,
+            "description": "The end time of SleepMode is minutes"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Set device boarding status",
+      "path": "/op/v0/device/boarding/status/set",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Device sn"
+          },
+          {
+            "order": 2,
+            "name": "status",
+            "path": "status",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Represents the binding state. 0 for Pending Confirmation, 1 for Confirmed.",
+            "other_information": "Enumeration: 0,1",
+            "enum": [
+              "0",
+              "1"
+            ]
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "number",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "msg",
+            "path": "msg",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter",
+      "title": "Get Device Fault History",
+      "path": "/op/v0/device/fault/history",
+      "method": "POST",
+      "deprecated": false,
+      "description": "",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "sn",
+            "path": "sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 2,
+            "name": "date",
+            "path": "date",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Target date for the query (Format: YYYY-MM-DD)",
+            "format": "YYYY-MM-DD)"
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ sn",
+            "path": "├─ sn",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ faults",
+            "path": "├─ faults",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 5,
+            "name": "├─ faultCode",
+            "path": "├─ faultCode",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "fault code"
+          },
+          {
+            "order": 6,
+            "name": "├─ faultMessage",
+            "path": "├─ faultMessage",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "fault message"
+          },
+          {
+            "order": 7,
+            "name": "├─ timestamp",
+            "path": "├─ timestamp",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Unix timestamp (milliseconds) when the fault occurred.",
+            "unit": "milliseconds"
+          }
+        ]
+      }
+    }
+  ]
+}

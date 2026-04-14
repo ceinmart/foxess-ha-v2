@@ -1,0 +1,16 @@
+# Versao: v0.1.0
+# Data/hora de criacao: 2026-04-14 16:35:00
+# Criado por: Codex / OpenAI
+# Projeto/Pasta: C:\tmp\foxess-ha.v2
+
+__pycache__/
+*.py[cod]
+*.pyc.*
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+dist/
+build/
+*.log

@@ -1,0 +1,17 @@
+{
+  "domain": "foxess_ha_v2",
+  "name": "FoxESS HA v2",
+  "codeowners": [
+    "@ceinmart"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/ceinmart/foxess-ha-v2",
+  "issue_tracker": "https://github.com/ceinmart/foxess-ha-v2/issues",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "loggers": [
+    "custom_components.foxess_ha_v2"
+  ],
+  "requirements": [],
+  "version": "0.1.0"
+}

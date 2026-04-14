@@ -1,0 +1,250 @@
+{
+  "api_name": "FoxESS Open API",
+  "base_url": "https://www.foxesscloud.com",
+  "format_version": "codegen-v1",
+  "group": "Platform interface",
+  "endpoint_count": 2,
+  "endpoints": [
+    {
+      "group": "Platform interface",
+      "title": "Get the number of public interface accesses",
+      "path": "/op/v0/user/getAccessCount",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain the number of accessible interfaces under the account based on the open api.",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "currentPage",
+            "path": "currentPage",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "default": "1",
+            "description": "Current page number",
+            "other_information": "Minimum value: 1",
+            "minimum": 1
+          },
+          {
+            "order": 2,
+            "name": "pageSize",
+            "path": "pageSize",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "default": "10",
+            "description": "The amount of data presented per page",
+            "other_information": "Maximum value: 1000  Minimum value: 10",
+            "minimum": 10,
+            "maximum": 1000
+          }
+        ],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ total",
+            "path": "├─ total",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Number of total times that the user can access the open interface"
+          },
+          {
+            "order": 4,
+            "name": "├─ remaining",
+            "path": "├─ remaining",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Number of remaining times that the user can access the open interface"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Platform interface",
+      "title": "Installer device count",
+      "path": "/op/v0/device/installer/count",
+      "method": "POST",
+      "deprecated": false,
+      "description": "response body example:   {       \"errno\": 0,       \"msg\": \"Operation successful\",       \"result\": **null**   }",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "number",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "msg",
+            "path": "msg",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 4,
+            "name": "├─ year",
+            "path": "├─ year",
+            "level": 0,
+            "type": "number",
+            "required": true
+          },
+          {
+            "order": 5,
+            "name": "├─ deviceCountryCounts",
+            "path": "├─ deviceCountryCounts",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 6,
+            "name": "├─ country",
+            "path": "├─ country",
+            "level": 0,
+            "type": "string",
+            "required": true
+          },
+          {
+            "order": 7,
+            "name": "├─ deviceCount",
+            "path": "├─ deviceCount",
+            "level": 0,
+            "type": "number",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

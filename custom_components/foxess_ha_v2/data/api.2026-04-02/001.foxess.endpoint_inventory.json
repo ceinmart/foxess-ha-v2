@@ -1,0 +1,647 @@
+{
+  "total_endpoints": 77,
+  "mapped_batches": {
+    "batch_1": {
+      "range": "1-15",
+      "status": "mapped"
+    },
+    "batch_2": {
+      "range": "16-30",
+      "status": "mapped"
+    },
+    "batch_3": {
+      "range": "31-45",
+      "status": "mapped"
+    },
+    "batch_4": {
+      "range": "46-60",
+      "status": "mapped"
+    },
+    "batch_5": {
+      "range": "61-75",
+      "status": "mapped"
+    },
+    "batch_6": {
+      "range": "76-77",
+      "status": "mapped"
+    }
+  },
+  "endpoints_indexed_by_path": [
+    {
+      "index": 1,
+      "group": "Power Station",
+      "title": "Create power station",
+      "path": "/op/v0/plant/create",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 2,
+      "group": "Power Station",
+      "title": "Delete power station",
+      "path": "/op/v0/plant/delete",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 3,
+      "group": "Power Station",
+      "title": "Edit power station",
+      "path": "/op/v0/plant/update",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 4,
+      "group": "Power Station",
+      "title": "Get power station detail",
+      "path": "/op/v0/plant/detail",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 5,
+      "group": "Power Station",
+      "title": "Get power station list",
+      "path": "/op/v0/plant/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 6,
+      "group": "Inverter-V1",
+      "title": "Get device detail",
+      "path": "/op/v1/device/detail",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 7,
+      "group": "Inverter-V1",
+      "title": "Get device real-time data",
+      "path": "/op/v1/device/real/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 8,
+      "group": "Inverter",
+      "title": "Get device list",
+      "path": "/op/v0/device/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 9,
+      "group": "Inverter",
+      "title": "Get device detail (Deprecated)",
+      "path": "/op/v0/device/detail",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 10,
+      "group": "Inverter",
+      "title": "Get available variables",
+      "path": "/op/v0/device/variable/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 11,
+      "group": "Inverter",
+      "title": "Get error code information",
+      "path": "/op/v0/device/fault/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 12,
+      "group": "Inverter",
+      "title": "Get device real-time data (Deprecated)",
+      "path": "/op/v0/device/real/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 13,
+      "group": "Inverter",
+      "title": "Get device history data",
+      "path": "/op/v0/device/history/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 14,
+      "group": "Inverter",
+      "title": "Get device production report",
+      "path": "/op/v0/device/report/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 15,
+      "group": "Inverter",
+      "title": "Get device power generation",
+      "path": "/op/v0/device/generation",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 16,
+      "group": "Inverter",
+      "title": "Get the minimum soc settings for the battery of device",
+      "path": "/op/v0/device/battery/soc/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 17,
+      "group": "Inverter",
+      "title": "Set the minmum soc for the battery of the device",
+      "path": "/op/v0/device/battery/soc/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 18,
+      "group": "Inverter",
+      "title": "Get the setting of battery charging time",
+      "path": "/op/v0/device/battery/forceChargeTime/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 19,
+      "group": "Inverter",
+      "title": "Set the battery charging time",
+      "path": "/op/v0/device/battery/forceChargeTime/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 20,
+      "group": "Inverter",
+      "title": "Get the device settings item",
+      "path": "/op/v0/device/setting/get",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 21,
+      "group": "Inverter",
+      "title": "Set the device settings item",
+      "path": "/op/v0/device/setting/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 22,
+      "group": "Inverter",
+      "title": "Get the device time",
+      "path": "/op/v0/device/time/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 23,
+      "group": "Inverter",
+      "title": "Set the device time",
+      "path": "/op/v0/device/time/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 24,
+      "group": "Inverter",
+      "title": "Get the device peakshaving settings",
+      "path": "/op/v0/device/peakShaving/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 25,
+      "group": "Inverter",
+      "title": "Set the device peakshaving settings",
+      "path": "/op/v0/device/peakShaving/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 26,
+      "group": "Inverter",
+      "title": "Get the Meter Reader",
+      "path": "/op/v0/device/getMeterReader",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 27,
+      "group": "Inverter",
+      "title": "Set the Meter Reader",
+      "path": "/op/v0/device/setMeterReader",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 28,
+      "group": "Inverter",
+      "title": "Get battery heating Parameter",
+      "path": "/op/v0/device/batteryHeating/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 29,
+      "group": "Inverter",
+      "title": "Set battery heating Parameter",
+      "path": "/op/v0/device/batteryHeating/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 30,
+      "group": "Inverter",
+      "title": "Get display sleep Paeameter",
+      "path": "/op/v0/device/displaySleep/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 31,
+      "group": "Inverter",
+      "title": "Set display sleep Paeameter",
+      "path": "/op/v0/device/displaySleep/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 32,
+      "group": "Inverter",
+      "title": "Set device boarding status",
+      "path": "/op/v0/device/boarding/status/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 33,
+      "group": "Inverter",
+      "title": "Get Device Fault History",
+      "path": "/op/v0/device/fault/history",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 34,
+      "group": "Scheduler-V3",
+      "title": "Get the time segment information",
+      "path": "/op/v3/device/scheduler/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 35,
+      "group": "Scheduler-V3",
+      "title": "Set the time segment information",
+      "path": "/op/v3/device/scheduler/enable",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 36,
+      "group": "Scheduler-V2",
+      "title": "Get the time segment information",
+      "path": "/op/v2/device/scheduler/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 37,
+      "group": "Scheduler-V2",
+      "title": "Set the time segment information",
+      "path": "/op/v2/device/scheduler/enable",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 38,
+      "group": "Scheduler-V1",
+      "title": "Get the main switch status",
+      "path": "/op/v1/device/scheduler/get/flag",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 39,
+      "group": "Scheduler-V1",
+      "title": "Set the main switch status",
+      "path": "/op/v1/device/scheduler/set/flag",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 40,
+      "group": "Scheduler-V1",
+      "title": "Get the time segment information",
+      "path": "/op/v1/device/scheduler/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 41,
+      "group": "Scheduler-V1",
+      "title": "Set the time segment information",
+      "path": "/op/v1/device/scheduler/enable",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 42,
+      "group": "Scheduler",
+      "title": "Get the main switch status (Deprecated)",
+      "path": "/op/v0/device/scheduler/get/flag",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 43,
+      "group": "Scheduler",
+      "title": "Get the time segment information (Deprecated)",
+      "path": "/op/v0/device/scheduler/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 44,
+      "group": "Scheduler",
+      "title": "Set the main switch status (Deprecated)",
+      "path": "/op/v0/device/scheduler/set/flag",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 45,
+      "group": "Scheduler",
+      "title": "Set the time segment information (Deprecated)",
+      "path": "/op/v0/device/scheduler/enable",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 46,
+      "group": "Data Logger",
+      "title": "Get Data Logger list",
+      "path": "/op/v0/module/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 47,
+      "group": "Data Logger",
+      "title": "Get Data Logger Details",
+      "path": "/op/v0/module/detail",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 48,
+      "group": "Data Logger",
+      "title": "Get Data Logger Signal",
+      "path": "/op/v0/module/getSignal",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 49,
+      "group": "Data Logger",
+      "title": "Modbus Commands",
+      "path": "/op/v0/module/modbus/commands",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 50,
+      "group": "EMS",
+      "title": "Get Ems list",
+      "path": "/op/v0/ems/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 51,
+      "group": "EMS",
+      "title": "Get Ems real-time data",
+      "path": "/op/v0/ems/real/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 52,
+      "group": "EMS",
+      "title": "Get Ems history data",
+      "path": "/op/v0/ems/history/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 53,
+      "group": "EMS",
+      "title": "Get Ems System Setting",
+      "path": "/op/v0/ems/setting/system/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 54,
+      "group": "EMS",
+      "title": "Set Ems System Setting",
+      "path": "/op/v0/ems/setting/system/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 55,
+      "group": "EMS",
+      "title": "Get Ems Rate Setting",
+      "path": "/op/v0/ems/setting/rate/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 56,
+      "group": "EMS",
+      "title": "Set Ems Rate Setting",
+      "path": "/op/v0/ems/setting/rate/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 57,
+      "group": "EMS",
+      "title": "Set Ems Ac Output Control Setting",
+      "path": "/op/v0/ems/setting/acOutput/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 58,
+      "group": "EMS",
+      "title": "Get Ems Ac Output Control Setting",
+      "path": "/op/v0/ems/setting/acOutput/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 59,
+      "group": "EMS",
+      "title": "Set Ems Power Limit Control Setting",
+      "path": "/op/v0/ems/setting/powerLimit/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 60,
+      "group": "EMS",
+      "title": "Get Ems Power Limit Control Setting",
+      "path": "/op/v0/ems/setting/powerLimit/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 61,
+      "group": "EMS",
+      "title": "Set Ems More Setting",
+      "path": "/op/v0/ems/setting/more/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 62,
+      "group": "EMS",
+      "title": "Get Ems More Setting",
+      "path": "/op/v0/ems/setting/more/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 63,
+      "group": "EMS",
+      "title": "Set Ems Gen Setting",
+      "path": "/op/v0/ems/setting/gen/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 64,
+      "group": "EMS",
+      "title": "Get Ems Gen Setting",
+      "path": "/op/v0/ems/setting/gen/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 65,
+      "group": "Meter",
+      "title": "Get meter list",
+      "path": "/op/v0/gw/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 66,
+      "group": "Meter",
+      "title": "Get the device settings item",
+      "path": "/op/v0/gw/setting/get",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 67,
+      "group": "Meter",
+      "title": "Set the device settings item",
+      "path": "/op/v0/gw/setting/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 68,
+      "group": "Heat",
+      "title": "Heat Pump Register",
+      "path": "/op/v0/heat/register",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 69,
+      "group": "Heat",
+      "title": "Heat Pump Register List",
+      "path": "/op/v0/register/heat/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 70,
+      "group": "Heat",
+      "title": "Heat Pump Register Status Change",
+      "path": "/op/v0/heat/register/status/change",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 71,
+      "group": "GMAX",
+      "title": "Get gmax list",
+      "path": "/op/v0/gmax/list",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 72,
+      "group": "GMAX",
+      "title": "Get history data",
+      "path": "/op/v0/gmax/history/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 73,
+      "group": "GMAX",
+      "title": "Get gmax real data",
+      "path": "/op/v0/gmax/real/query",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 74,
+      "group": "GMAX",
+      "title": "Get peak and valley arbitrage",
+      "path": "/op/v0/gmax/peakValleyPower/get",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 75,
+      "group": "GMAX",
+      "title": "Set peak and valley arbitrage",
+      "path": "/op/v0/gmax/peakValleyPower/set",
+      "method": "POST",
+      "status": "mapped"
+    },
+    {
+      "index": 76,
+      "group": "Platform interface",
+      "title": "Get the number of public interface accesses",
+      "path": "/op/v0/user/getAccessCount",
+      "method": "GET",
+      "status": "mapped"
+    },
+    {
+      "index": 77,
+      "group": "Platform interface",
+      "title": "Installer device count",
+      "path": "/op/v0/device/installer/count",
+      "method": "GET",
+      "status": "mapped"
+    }
+  ]
+}

@@ -1,0 +1,462 @@
+{
+  "api_name": "FoxESS Open API",
+  "base_url": "https://www.foxesscloud.com",
+  "format_version": "codegen-v1",
+  "group": "Inverter-V1",
+  "endpoint_count": 2,
+  "endpoints": [
+    {
+      "group": "Inverter-V1",
+      "title": "Get device detail",
+      "path": "/op/v1/device/detail",
+      "method": "GET",
+      "deprecated": false,
+      "description": "Obtain inverter details",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [
+          {
+            "order": 1,
+            "name": "sn",
+            "type": "string",
+            "required": true,
+            "description": "Serial number of Inverter"
+          }
+        ],
+        "body": [],
+        "body_example": null
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Error number（When the result is not equal to zero, the request fails）"
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object",
+            "required": true
+          },
+          {
+            "order": 3,
+            "name": "├─ deviceSN",
+            "path": "├─ deviceSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ moduleSN",
+            "path": "├─ moduleSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the collector"
+          },
+          {
+            "order": 5,
+            "name": "├─ stationID",
+            "path": "├─ stationID",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Id of power station"
+          },
+          {
+            "order": 6,
+            "name": "├─ stationName",
+            "path": "├─ stationName",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Name of power station"
+          },
+          {
+            "order": 7,
+            "name": "├─ afciVersion",
+            "path": "├─ afciVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of afci"
+          },
+          {
+            "order": 8,
+            "name": "├─ managerVersion",
+            "path": "├─ managerVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of manager"
+          },
+          {
+            "order": 9,
+            "name": "├─ masterVersion",
+            "path": "├─ masterVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of master"
+          },
+          {
+            "order": 10,
+            "name": "├─ slaveVersion",
+            "path": "├─ slaveVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of slave"
+          },
+          {
+            "order": 11,
+            "name": "├─ hardwareVersion",
+            "path": "├─ hardwareVersion",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of hardware"
+          },
+          {
+            "order": 12,
+            "name": "├─ status",
+            "path": "├─ status",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "Status of device",
+            "other_information": "Enumeration: 1,2,3  Enumeration note: 1:online 2:breakdown 3:offline",
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ],
+            "enum_descriptions": "1:online 2:breakdown 3:offline"
+          },
+          {
+            "order": 13,
+            "name": "├─ capacity",
+            "path": "├─ capacity",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Capacity of device(in kW)"
+          },
+          {
+            "order": 14,
+            "name": "├─ thirdPartyGen",
+            "path": "├─ thirdPartyGen",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Does the equipment connect to the third-party power generation equipment"
+          },
+          {
+            "order": 15,
+            "name": "├─ function",
+            "path": "├─ function",
+            "level": 0,
+            "type": "object",
+            "required": true,
+            "description": "Functional support"
+          },
+          {
+            "order": 16,
+            "name": "├─ scheduler",
+            "path": "├─ scheduler",
+            "level": 0,
+            "type": "boolean",
+            "required": true,
+            "description": "Whether the periodic mode switchover function is supported"
+          },
+          {
+            "order": 17,
+            "name": "├─ batteryList",
+            "path": "├─ batteryList",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 18,
+            "name": "├─ batterySN",
+            "path": "├─ batterySN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial number of the battery"
+          },
+          {
+            "order": 19,
+            "name": "├─ type",
+            "path": "├─ type",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Master Slave Type of the battery"
+          },
+          {
+            "order": 20,
+            "name": "├─ version",
+            "path": "├─ version",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Version of the battery"
+          },
+          {
+            "order": 21,
+            "name": "├─ model",
+            "path": "├─ model",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "model of the battery"
+          },
+          {
+            "order": 22,
+            "name": "├─ capicty",
+            "path": "├─ capicty",
+            "level": 0,
+            "type": "integer",
+            "required": true,
+            "description": "capicty of the battery"
+          }
+        ]
+      }
+    },
+    {
+      "group": "Inverter-V1",
+      "title": "Get device real-time data",
+      "path": "/op/v1/device/real/query",
+      "method": "POST",
+      "deprecated": false,
+      "description": "Get the latest real-time data of the inverter. The sn array is mandatory and returns only the result set belonging to the current user. If no variable is specified, all variables are queried    ``` {   \"sns\": [\"***************\",\"***************\",\"***************\"],   \"variables\": [\"pvPower\",\"pv1Current\"] } ```",
+      "request": {
+        "headers": [
+          {
+            "order": 1,
+            "name": "Content-Type",
+            "type": "string",
+            "required": true,
+            "default": "application/json"
+          },
+          {
+            "order": 2,
+            "name": "token",
+            "type": "string",
+            "required": true,
+            "description": "Generate apikey from the API management function of the platform"
+          },
+          {
+            "order": 3,
+            "name": "signature",
+            "type": "string",
+            "required": true,
+            "description": "Signature rule: Encrypt the string url + \"\\r\\n\" + token + \"\\r\\n\" + timestamp with md5"
+          },
+          {
+            "order": 4,
+            "name": "timestamp",
+            "type": "string",
+            "required": true,
+            "description": "Current timestamp"
+          },
+          {
+            "order": 5,
+            "name": "lang",
+            "type": "string",
+            "required": true,
+            "example": "en",
+            "description": "Language"
+          }
+        ],
+        "query": [],
+        "body": [
+          {
+            "order": 1,
+            "name": "variables",
+            "path": "variables",
+            "level": 0,
+            "type": "string []",
+            "required": false,
+            "description": "If this parameter is not passed, all variable data is obtained by default item type: string",
+            "other_information": "item Type: string",
+            "item_type": "string"
+          },
+          {
+            "order": 2,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false,
+            "description": "Variable name Available variables can be queried through the Get Variables interface Remark:Variable name,available variables can be queried through the Get Variables interface"
+          },
+          {
+            "order": 3,
+            "name": "sns",
+            "path": "sns",
+            "level": 0,
+            "type": "string []",
+            "required": true,
+            "description": "Serial Number of Inverter Remark:Can transmit up to 50 Serial Number",
+            "other_information": "item Type: string",
+            "item_type": "string"
+          },
+          {
+            "order": 4,
+            "name": "├─",
+            "path": "├─",
+            "level": 0,
+            "required": false
+          }
+        ],
+        "body_example": "{\n  \"sns\": [\"***************\",\"***************\",\"***************\"],\n  \"variables\": [\"pvPower\",\"pv1Current\"]\n}"
+      },
+      "response": {
+        "success_rule": {
+          "field": "errno",
+          "success_when": 0,
+          "description": "Request succeeds when errno equals 0."
+        },
+        "fields": [
+          {
+            "order": 1,
+            "name": "errno",
+            "path": "errno",
+            "level": 0,
+            "type": "integer",
+            "required": true
+          },
+          {
+            "order": 2,
+            "name": "result",
+            "path": "result",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 3,
+            "name": "├─ deviceSN",
+            "path": "├─ deviceSN",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Serial Number of Inverter"
+          },
+          {
+            "order": 4,
+            "name": "├─ datas",
+            "path": "├─ datas",
+            "level": 0,
+            "type": "object []",
+            "required": true,
+            "other_information": "item Type: object",
+            "item_type": "object"
+          },
+          {
+            "order": 5,
+            "name": "├─ variable",
+            "path": "├─ variable",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Variable name If the data is not found, it will not be returned"
+          },
+          {
+            "order": 6,
+            "name": "├─ unit",
+            "path": "├─ unit",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Unit"
+          },
+          {
+            "order": 7,
+            "name": "├─ name",
+            "path": "├─ name",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Name in English"
+          },
+          {
+            "order": 8,
+            "name": "├─ value",
+            "path": "├─ value",
+            "level": 0,
+            "type": "number",
+            "required": true,
+            "description": "Value"
+          },
+          {
+            "order": 9,
+            "name": "├─ time",
+            "path": "├─ time",
+            "level": 0,
+            "type": "string",
+            "required": true,
+            "description": "Inverter local time, yyyy-MM-dd HH:mm:ss zZ format"
+          }
+        ]
+      }
+    }
+  ]
+}

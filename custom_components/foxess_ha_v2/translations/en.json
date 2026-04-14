@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect FoxESS account",
+        "description": "Enter your FoxESS API key to discover available devices.",
+        "data": {
+          "api_key": "API key"
+        }
+      },
+      "select_devices": {
+        "title": "Select devices",
+        "description": "Choose one or more devices to include in this integration entry.",
+        "data": {
+          "selected_devices": "Devices"
+        }
+      },
+      "device_settings": {
+        "title": "Device settings",
+        "description": "Define friendly names and polling expressions for each selected device.",
+        "data": {}
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid API key.",
+      "cannot_connect": "Cannot connect to FoxESS API.",
+      "no_devices": "No devices were found for this API key.",
+      "invalid_polling_expression": "Invalid polling expression format. Use example: 5h-19h:1m;5m.",
+      "required": "This field is required.",
+      "unknown": "Unexpected error."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Update device settings",
+        "description": "Adjust friendly names and polling expressions."
+      }
+    },
+    "error": {
+      "invalid_polling_expression": "Invalid polling expression format. Use example: 5h-19h:1m;5m.",
+      "required": "This field is required.",
+      "unknown": "Unexpected error."
+    }
+  }
+}
