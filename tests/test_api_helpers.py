@@ -9,7 +9,9 @@ import hashlib
 
 from custom_components.foxess_ha_v2.api import (
     extract_realtime_by_sn,
+    extract_realtime_variable_records,
     extract_scalar_variable_names,
+    normalize_variable_catalog_response,
     generate_signature,
 )
 
@@ -46,9 +48,58 @@ def test_extract_realtime_by_sn_single_fallback():
     assert by_sn["ONLY1"]["pvPower"] == 123
 
 
+def test_extract_realtime_by_sn_result_list_with_device_sn():
+    payload = {
+        "errno": 0,
+        "result": [
+            {
+                "deviceSN": "SN1",
+                "time": "2026-01-01 10:00:00",
+                "datas": [{"variable": "pvPower", "value": 1.5, "unit": "kW"}],
+            }
+        ],
+    }
+    by_sn = extract_realtime_by_sn(payload, ["SN1"])
+    assert by_sn["SN1"]["deviceSN"] == "SN1"
+    assert by_sn["SN1"]["datas"][0]["variable"] == "pvPower"
+
+
 def test_extract_scalar_variable_names_nested():
     payload = {"result": {"data": [{"sn": "A1", "pvPower": 100, "nested": {"soc": 90}}]}}
     variables = extract_scalar_variable_names(payload)
     assert "sn" in variables
     assert "pvPower" in variables
     assert "soc" in variables
+
+
+def test_extract_realtime_variable_records_from_datas():
+    payload = {
+        "deviceSN": "SN1",
+        "time": "2026-01-01 10:00:00",
+        "datas": [
+            {"variable": "pvPower", "value": 1.2, "unit": "kW", "name": "PV Power"},
+            {"variable": "todayYield", "value": 7.5, "unit": "kWh", "name": "Today Yield"},
+        ],
+    }
+    records = extract_realtime_variable_records(payload)
+    assert records["pvPower"]["value"] == 1.2
+    assert records["pvPower"]["unit"] == "kW"
+    assert records["todayYield"]["name"] == "Today Yield"
+
+
+def test_normalize_variable_catalog_response_list_datas_shape():
+    payload = {
+        "errno": 0,
+        "result": [
+            {
+                "datas": [
+                    {"variable": "pvPower", "unit": "kW", "name": "PV Power"},
+                    {"variable": "todayYield", "unit": "kWh", "name": "Today Yield"},
+                ]
+            }
+        ],
+    }
+    catalog = normalize_variable_catalog_response(payload)
+    assert "pvPower" in catalog
+    assert catalog["pvPower"]["unit"] == "kW"
+    assert catalog["todayYield"]["name"]["en"] == "Today Yield"

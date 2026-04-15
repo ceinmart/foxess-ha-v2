@@ -22,7 +22,7 @@ from .api import (
     FoxessApiAuthError,
     FoxessApiClient,
     FoxessApiRequestError,
-    extract_scalar_variable_names,
+    extract_realtime_variable_records,
 )
 from .const import (
     API_BASE_URL,
@@ -264,9 +264,27 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         for sn in self._selected_device_sns:
             payload = by_sn.get(sn, {})
-            inferred = sorted(extract_scalar_variable_names(payload))
+            realtime_records = extract_realtime_variable_records(payload)
+            inferred = sorted(realtime_records.keys())
+
+            # Merge realtime-discovered variable labels/units when catalog is incomplete.
+            for variable, row in realtime_records.items():
+                existing = self._variable_catalog.get(variable, {})
+                if not isinstance(existing, dict):
+                    existing = {}
+                merged = dict(existing)
+                if row.get("unit") and not merged.get("unit"):
+                    merged["unit"] = row.get("unit")
+                if row.get("name"):
+                    labels = merged.get("name", {})
+                    if not isinstance(labels, dict):
+                        labels = {}
+                    labels.setdefault("en", row.get("name"))
+                    merged["name"] = labels
+                self._variable_catalog[variable] = merged
+
             if self._variable_catalog:
-                inferred = [key for key in inferred if key in self._variable_catalog]
+                inferred = [key for key in inferred if key in self._variable_catalog] or inferred
             if not inferred and self._variable_catalog:
                 inferred = sorted(self._variable_catalog.keys())
             self._variables_by_device[sn] = sorted(set(inferred))

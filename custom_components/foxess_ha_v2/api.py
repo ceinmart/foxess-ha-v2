@@ -76,6 +76,75 @@ def extract_scalar_variable_names(payload: Any) -> set[str]:
     return found
 
 
+def extract_realtime_variable_records(device_payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Normalize realtime payload into {variable: {value, unit, name, time}}."""
+
+    rows: list[dict[str, Any]] = []
+    for key in ("datas", "data", "items", "records", "list"):
+        value = device_payload.get(key)
+        if isinstance(value, list):
+            rows.extend(item for item in value if isinstance(item, dict))
+
+    by_variable: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        variable = row.get("variable")
+        if isinstance(variable, str) and variable.strip():
+            by_variable[variable] = {
+                "value": row.get("value"),
+                "unit": row.get("unit"),
+                "name": row.get("name"),
+                "time": device_payload.get("time"),
+            }
+
+    if by_variable:
+        return by_variable
+
+    # Fallback for flatter payload structures.
+    for key, value in device_payload.items():
+        if key in {"sn", "deviceSN", "deviceSn", "time"}:
+            continue
+        if isinstance(value, (str, int, float, bool)):
+            by_variable[key] = {"value": value, "unit": None, "name": key, "time": device_payload.get("time")}
+
+    return by_variable
+
+
+def normalize_variable_catalog_response(response_data: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Normalize /op/v0/device/variable/get to {variable: meta}."""
+
+    result = _extract_result(response_data) if isinstance(response_data, dict) else {}
+    catalog: dict[str, dict[str, Any]] = {}
+
+    if isinstance(result, dict):
+        for variable, meta in result.items():
+            if isinstance(variable, str) and isinstance(meta, dict):
+                catalog[variable] = meta
+
+    if isinstance(result, list):
+        for entry in result:
+            if not isinstance(entry, dict):
+                continue
+
+            datas = entry.get("datas")
+            if isinstance(datas, list):
+                for row in datas:
+                    if not isinstance(row, dict):
+                        continue
+                    variable = row.get("variable")
+                    if isinstance(variable, str):
+                        catalog[variable] = {
+                            "unit": row.get("unit"),
+                            "name": {"en": row.get("name")} if row.get("name") else {},
+                        }
+
+            # Some payloads may come as { "<variable>": {meta... } } inside list entries.
+            for variable, meta in entry.items():
+                if isinstance(variable, str) and isinstance(meta, dict):
+                    catalog[variable] = meta
+
+    return catalog
+
+
 def extract_realtime_by_sn(payload: dict[str, Any], sns: Iterable[str]) -> dict[str, dict[str, Any]]:
     sns = list(sns)
     result = _extract_result(payload)
@@ -102,6 +171,8 @@ def extract_realtime_by_sn(payload: dict[str, Any], sns: Iterable[str]) -> dict[
 
     if not by_sn and len(sns) == 1 and isinstance(result, dict):
         by_sn[sns[0]] = result
+    if not by_sn and len(sns) == 1 and isinstance(result, list) and result and isinstance(result[0], dict):
+        by_sn[sns[0]] = result[0]
 
     return by_sn
 
@@ -217,12 +288,7 @@ class FoxessApiClient:
 
     async def async_get_variable_catalog(self) -> dict[str, Any]:
         payload = await self._request("GET", ENDPOINT_VARIABLE_CATALOG)
-        result = _extract_result(payload)
-        catalog: dict[str, dict[str, Any]] = {}
-        if isinstance(result, dict):
-            for variable, meta in result.items():
-                if isinstance(variable, str) and isinstance(meta, dict):
-                    catalog[variable] = meta
+        catalog = normalize_variable_catalog_response(payload)
         LOGGER.debug("FoxESS variable catalog returned %s variables", len(catalog))
         return {"raw": payload, "variables": catalog}
 

@@ -16,6 +16,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .api import extract_realtime_variable_records
 from .const import (
     CONF_DEVICE_SN,
     CONF_DEVICE_TYPE,
@@ -33,22 +34,26 @@ _ENERGY_UNITS = {"Wh", "kWh", "MWh"}
 _CURRENT_UNITS = {"A", "mA"}
 _VOLTAGE_UNITS = {"V", "mV"}
 _FREQUENCY_UNITS = {"Hz"}
-_TEMPERATURE_UNITS = {"C", "degC", "Cel", "°C"}
+_TEMPERATURE_UNITS = {"C", "degC", "Cel"}
+_RESERVED_VARIABLE_FIELDS = {
+    "deviceSN",
+    "deviceSn",
+    "sn",
+    "name",
+    "time",
+    "unit",
+    "value",
+    "variable",
+    "group",
+    "group_label",
+}
 
 
 def _extract_variable_value(device_payload: dict[str, Any], variable: str) -> Any:
-    if variable in device_payload:
-        return device_payload[variable]
-
-    for key in ("data", "datas", "items", "records"):
-        candidate = device_payload.get(key)
-        if isinstance(candidate, list):
-            for item in candidate:
-                if isinstance(item, dict) and variable in item:
-                    return item[variable]
-        if isinstance(candidate, dict) and variable in candidate:
-            return candidate[variable]
-
+    records = extract_realtime_variable_records(device_payload)
+    row = records.get(variable, {})
+    if isinstance(row, dict):
+        return row.get("value")
     return None
 
 
@@ -92,9 +97,41 @@ async def async_setup_entry(
 
     entities: list[SensorEntity] = []
     for sn, device_cfg in devices.items():
-        variables = device_cfg.get(CONF_SUPPORTED_VARIABLES, [])
+        configured_variables = [
+            variable
+            for variable in device_cfg.get(CONF_SUPPORTED_VARIABLES, [])
+            if isinstance(variable, str) and variable not in _RESERVED_VARIABLE_FIELDS
+        ]
+
+        runtime_payload = coordinator.data.get("realtime_by_sn", {}).get(sn, {})
+        runtime_records = extract_realtime_variable_records(runtime_payload)
+
+        runtime_variables = [
+            variable for variable in sorted(runtime_records.keys()) if variable not in _RESERVED_VARIABLE_FIELDS
+        ]
+        catalog_variables = [
+            variable for variable in sorted(variable_catalog.keys()) if variable not in _RESERVED_VARIABLE_FIELDS
+        ]
+        variables = configured_variables or runtime_variables or catalog_variables
+
         for variable in variables:
             variable_meta = variable_catalog.get(variable, {})
+            if not isinstance(variable_meta, dict):
+                variable_meta = {}
+            else:
+                variable_meta = dict(variable_meta)
+
+            if variable in runtime_records:
+                runtime_row = runtime_records[variable]
+                if runtime_row.get("unit") and not variable_meta.get("unit"):
+                    variable_meta["unit"] = runtime_row.get("unit")
+                if runtime_row.get("name"):
+                    labels = variable_meta.get("name", {})
+                    if not isinstance(labels, dict):
+                        labels = {}
+                    labels.setdefault("en", runtime_row.get("name"))
+                    variable_meta["name"] = labels
+
             entities.append(
                 FoxessVariableSensor(
                     coordinator=coordinator,
