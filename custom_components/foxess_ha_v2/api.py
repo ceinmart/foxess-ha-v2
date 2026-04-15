@@ -22,6 +22,7 @@ from .const import (
     API_BASE_URL,
     API_LANG,
     ENDPOINT_ACCESS_COUNT,
+    ENDPOINT_DEVICE_DETAIL,
     ENDPOINT_DEVICE_LIST,
     ENDPOINT_REALTIME_QUERY,
     ENDPOINT_VARIABLE_CATALOG,
@@ -54,6 +55,60 @@ def generate_signature(path: str, token: str, timestamp_ms: str) -> str:
 
 def _extract_result(payload: dict[str, Any]) -> Any:
     return payload.get("result", payload)
+
+
+def summarize_request_context(
+    query: dict[str, Any] | None = None,
+    body: dict[str, Any] | None = None,
+) -> str:
+    """Create a compact trace summary for log lines."""
+
+    parts: list[str] = []
+
+    if query:
+        sn = query.get("sn")
+        if isinstance(sn, str) and sn.strip():
+            parts.append(f"sn={sn.strip()}")
+
+    if body:
+        sn = body.get("sn")
+        if isinstance(sn, str) and sn.strip():
+            parts.append(f"sn={sn.strip()}")
+
+        sns = body.get("sns")
+        if isinstance(sns, list):
+            visible_sns = [str(item).strip() for item in sns[:3] if str(item).strip()]
+            if visible_sns:
+                summary = ",".join(visible_sns)
+                if len(sns) > len(visible_sns):
+                    summary = f"{summary},+{len(sns) - len(visible_sns)}"
+                parts.append(f"sns={summary}")
+            else:
+                parts.append(f"sns_count={len(sns)}")
+
+        variables = body.get("variables")
+        if isinstance(variables, list):
+            parts.append(f"variables={len(variables)}")
+
+        for key in ("currentPage", "pageSize"):
+            value = body.get(key)
+            if isinstance(value, (str, int, float)):
+                parts.append(f"{key}={value}")
+
+    return " ".join(parts) if parts else "-"
+
+
+def extract_device_detail(payload: dict[str, Any], *, default_sn: str | None = None) -> dict[str, Any]:
+    """Normalize /op/v1/device/detail to a single detail object."""
+
+    result = _extract_result(payload)
+    if isinstance(result, dict):
+        detail = dict(result)
+        if default_sn and not detail.get("deviceSN"):
+            detail["deviceSN"] = default_sn
+        return detail
+
+    return {"deviceSN": default_sn} if default_sn else {}
 
 
 def extract_scalar_variable_names(payload: Any) -> set[str]:
@@ -211,9 +266,12 @@ class FoxessApiClient:
         }
         url = f"{self._base_url}{path}"
         timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT_SECONDS)
+        request_context = summarize_request_context(query, body)
+        started = time.perf_counter()
+        payload: dict[str, Any] = {}
+        response_status: str | int = "n/a"
 
         try:
-            LOGGER.debug("FoxESS request %s %s", method.upper(), path)
             async with self._session.request(
                 method=method.upper(),
                 url=url,
@@ -223,40 +281,65 @@ class FoxessApiClient:
                 timeout=timeout,
                 ssl=REQUEST_VERIFY_SSL,
             ) as response:
+                response_status = response.status
                 raw_text = await response.text()
                 try:
                     payload = json.loads(raw_text) if raw_text else {}
                 except json.JSONDecodeError as exc:
-                    LOGGER.error(
-                        "FoxESS non-JSON response on %s status=%s body_preview=%s",
+                    LOGGER.debug(
+                        "FoxESS API call method=%s path=%s context=%s status=%s errno=%s duration_ms=%s error=%s",
+                        method.upper(),
                         path,
-                        response.status,
-                        raw_text[:200],
+                        request_context,
+                        response_status,
+                        None,
+                        int((time.perf_counter() - started) * 1000),
+                        "invalid_json",
                     )
                     raise FoxessApiRequestError(
-                        f"Invalid JSON response from {path}. status={response.status} body={raw_text[:300]}"
+                        f"Invalid JSON response from {path}. status={response_status} body={raw_text[:300]}"
                     ) from exc
                 LOGGER.debug(
-                    "FoxESS response %s status=%s errno=%s",
+                    "FoxESS API call method=%s path=%s context=%s status=%s errno=%s duration_ms=%s",
+                    method.upper(),
                     path,
-                    response.status,
+                    request_context,
+                    response_status,
                     payload.get("errno"),
+                    int((time.perf_counter() - started) * 1000),
                 )
-                if response.status >= 400:
+                if response_status >= 400:
                     raise FoxessApiRequestError(
-                        f"HTTP {response.status} calling {path}: {json.dumps(payload, ensure_ascii=True)[:500]}"
+                        f"HTTP {response_status} calling {path}: {json.dumps(payload, ensure_ascii=True)[:500]}"
                     )
         except aiohttp.ClientError as exc:
-            LOGGER.error("FoxESS client error calling %s: %s", path, exc)
+            LOGGER.debug(
+                "FoxESS API call method=%s path=%s context=%s status=%s errno=%s duration_ms=%s error=%s",
+                method.upper(),
+                path,
+                request_context,
+                "client_error",
+                payload.get("errno"),
+                int((time.perf_counter() - started) * 1000),
+                str(exc),
+            )
             raise FoxessApiRequestError(f"Request to {path} failed: {exc}") from exc
         except asyncio.TimeoutError as exc:
-            LOGGER.error("FoxESS timeout calling %s", path)
+            LOGGER.debug(
+                "FoxESS API call method=%s path=%s context=%s status=%s errno=%s duration_ms=%s error=%s",
+                method.upper(),
+                path,
+                request_context,
+                "timeout",
+                payload.get("errno"),
+                int((time.perf_counter() - started) * 1000),
+                "timeout",
+            )
             raise FoxessApiRequestError(f"Request to {path} timed out") from exc
 
         errno = payload.get("errno")
         if errno not in (None, 0):
             message = str(payload.get("msg", "Unknown FoxESS API error"))
-            LOGGER.warning("FoxESS API error on %s: errno=%s msg=%s", path, errno, message)
             lower_message = message.lower()
             if (
                 "token" in lower_message
@@ -283,13 +366,16 @@ class FoxessApiClient:
                 devices = [item for item in maybe_data if isinstance(item, dict)]
         elif isinstance(result, list):
             devices = [item for item in result if isinstance(item, dict)]
-        LOGGER.debug("FoxESS device list returned %s devices", len(devices))
         return {"raw": payload, "devices": devices}
+
+    async def async_get_device_detail(self, sn: str) -> dict[str, Any]:
+        payload = await self._request("GET", ENDPOINT_DEVICE_DETAIL, query={"sn": sn})
+        detail = extract_device_detail(payload, default_sn=sn)
+        return {"raw": payload, "detail": detail}
 
     async def async_get_variable_catalog(self) -> dict[str, Any]:
         payload = await self._request("GET", ENDPOINT_VARIABLE_CATALOG)
         catalog = normalize_variable_catalog_response(payload)
-        LOGGER.debug("FoxESS variable catalog returned %s variables", len(catalog))
         return {"raw": payload, "variables": catalog}
 
     async def async_query_realtime(
@@ -302,11 +388,6 @@ class FoxessApiClient:
             body["variables"] = variables
         payload = await self._request("POST", ENDPOINT_REALTIME_QUERY, body=body)
         by_sn = extract_realtime_by_sn(payload, sns)
-        LOGGER.debug(
-            "FoxESS realtime query requested sns=%s mapped=%s",
-            len(sns),
-            len(by_sn),
-        )
         return {"raw": payload, "by_sn": by_sn}
 
     async def async_get_access_count(self) -> dict[str, Any]:
@@ -317,7 +398,6 @@ class FoxessApiClient:
         if isinstance(result, dict):
             total = result.get("total")
             remaining = result.get("remaining")
-        LOGGER.debug("FoxESS access count total=%s remaining=%s", total, remaining)
         return {"raw": payload, "total": total, "remaining": remaining}
 
     def load_local_schema_manifest(self) -> dict[str, Any]:

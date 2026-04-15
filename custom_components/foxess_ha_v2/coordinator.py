@@ -23,6 +23,8 @@ from .const import (
     CONF_POLLING_EXPRESSION,
     COORDINATOR_TICK_MINUTES,
     DEFAULT_POLLING_EXPRESSION,
+    DEVICE_DETAIL_FALLBACK_REFRESH_INTERVAL_MINUTES,
+    DEVICE_DETAIL_REFRESH_INTERVAL_MINUTES,
 )
 from .polling import is_poll_due, parse_polling_expression
 
@@ -45,12 +47,22 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_access_refresh = None
         self._last_access_count: dict[str, Any] | None = None
         self._last_realtime_by_sn: dict[str, dict[str, Any]] = {}
+        self._last_detail_refresh = None
+        self._last_detail_refresh_by_sn: dict[str, Any] = {}
+        self._last_device_detail_by_sn: dict[str, dict[str, Any]] = {}
+
+    def _detail_refresh_due(self, now_local, sn: str) -> bool:
+        last_refresh = self._last_detail_refresh_by_sn.get(sn)
+        if last_refresh is None:
+            return True
+        return now_local - last_refresh >= timedelta(minutes=DEVICE_DETAIL_FALLBACK_REFRESH_INTERVAL_MINUTES)
 
     async def _async_update_data(self) -> dict[str, Any]:
         now_local = dt_util.now()
         devices = self._config_entry.data.get(CONF_DEVICES, {})
         realtime_by_sn: dict[str, dict[str, Any]] = {}
         due_sns: list[str] = []
+        detail_targets: set[str] = set()
 
         for sn, device_cfg in devices.items():
             expression = device_cfg.get(CONF_POLLING_EXPRESSION, DEFAULT_POLLING_EXPRESSION)
@@ -70,6 +82,16 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             len(due_sns),
         )
 
+        should_refresh_detail_snapshot = False
+        if self._last_detail_refresh is None:
+            should_refresh_detail_snapshot = True
+        else:
+            should_refresh_detail_snapshot = now_local - self._last_detail_refresh >= timedelta(
+                minutes=DEVICE_DETAIL_REFRESH_INTERVAL_MINUTES
+            )
+        if should_refresh_detail_snapshot:
+            detail_targets.update(devices.keys())
+
         try:
             if due_sns:
                 realtime_payload = await self._api_client.async_query_realtime(due_sns)
@@ -83,6 +105,8 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     single_by_sn = single_payload.get("by_sn", {})
                     if sn in single_by_sn:
                         realtime_by_sn[sn] = single_by_sn[sn]
+                    elif self._detail_refresh_due(now_local, sn):
+                        detail_targets.add(sn)
 
                 for sn in due_sns:
                     self._last_run_by_sn[sn] = now_local
@@ -90,6 +114,28 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if realtime_by_sn:
                     self._last_realtime_by_sn.update(realtime_by_sn)
                     LOGGER.debug("Coordinator cached realtime payload for %s devices", len(self._last_realtime_by_sn))
+
+            if detail_targets:
+                detail_refresh_success = False
+                for sn in sorted(detail_targets):
+                    try:
+                        detail_payload = await self._api_client.async_get_device_detail(sn)
+                    except FoxessApiAuthError:
+                        raise
+                    except FoxessApiRequestError:
+                        LOGGER.debug("Coordinator keeping cached device detail for sn=%s after detail refresh failure", sn)
+                        continue
+
+                    detail = detail_payload.get("detail", {})
+                    if detail:
+                        detail_with_meta = dict(detail)
+                        detail_with_meta["_fetched_at"] = now_local.isoformat()
+                        self._last_device_detail_by_sn[sn] = detail_with_meta
+                        self._last_detail_refresh_by_sn[sn] = now_local
+                        detail_refresh_success = True
+
+                if should_refresh_detail_snapshot and detail_refresh_success:
+                    self._last_detail_refresh = now_local
 
             should_refresh_access = False
             if self._last_access_refresh is None:
@@ -111,5 +157,6 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "updated_at": now_local.isoformat(),
             "due_sns": due_sns,
             "realtime_by_sn": dict(self._last_realtime_by_sn),
+            "device_detail_by_sn": dict(self._last_device_detail_by_sn),
             "access_count": self._last_access_count or {},
         }
