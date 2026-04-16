@@ -1,0 +1,27 @@
+# Versao: v0.1.4b1
+# Data/hora de criacao: 2026-04-15 10:36:00
+# Criado por: Codex / OpenAI
+# Projeto/Pasta: C:\tmp\foxess-ha.v2
+
+name: Hassfest
+
+on:
+  push:
+    branches:
+      - main
+      - "fix/**"
+      - "feat/**"
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Hassfest validation
+        uses: home-assistant/actions/hassfest@master

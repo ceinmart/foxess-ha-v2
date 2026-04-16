@@ -8,7 +8,7 @@ Projeto/Pasta: C:\\tmp\\foxess-ha.v2
 from homeassistant.const import Platform
 
 DOMAIN = "foxess_ha_v2"
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
 API_BASE_URL = "https://www.foxesscloud.com"
 API_LANG = "en"
@@ -17,6 +17,7 @@ SCHEMA_VERSION_FOLDER = "api.2026-04-02"
 SCHEMA_BASE_DIR = "data"
 
 ENDPOINT_DEVICE_LIST = "/op/v0/device/list"
+ENDPOINT_DEVICE_DETAIL = "/op/v1/device/detail"
 ENDPOINT_VARIABLE_CATALOG = "/op/v0/device/variable/get"
 ENDPOINT_REALTIME_QUERY = "/op/v1/device/real/query"
 ENDPOINT_ACCESS_COUNT = "/op/v0/user/getAccessCount"
@@ -43,5 +44,12 @@ CONF_SUPPORTED_VARIABLES = "supported_variables"
 DEFAULT_POLLING_EXPRESSION = "5h-19h:1m;5m"
 COORDINATOR_TICK_MINUTES = 1
 ACCESS_COUNT_REFRESH_INTERVAL_MINUTES = 30
+DEVICE_DETAIL_REFRESH_INTERVAL_MINUTES = 60
+DEVICE_DETAIL_FALLBACK_REFRESH_INTERVAL_MINUTES = 15
 REQUEST_TIMEOUT_SECONDS = 20
 REQUEST_VERIFY_SSL = False
+
+ATTR_LAST_VALID_AT = "last_valid_at"
+ATTR_SOURCE_TIMESTAMP = "source_timestamp"
+ATTR_STALE = "stale"
+ATTR_RESTORED = "restored"

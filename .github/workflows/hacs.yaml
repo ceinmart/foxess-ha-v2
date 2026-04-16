@@ -1,0 +1,29 @@
+# Versao: v0.1.4b1
+# Data/hora de criacao: 2026-04-15 10:35:00
+# Criado por: Codex / OpenAI
+# Projeto/Pasta: C:\tmp\foxess-ha.v2
+
+name: Validate with HACS
+
+on:
+  push:
+    branches:
+      - main
+      - "fix/**"
+      - "feat/**"
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: HACS validation
+        uses: hacs/action@main
+        with:
+          category: integration

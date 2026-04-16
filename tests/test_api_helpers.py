@@ -8,12 +8,15 @@ Projeto/Pasta: C:\\tmp\\foxess-ha.v2
 import hashlib
 
 from custom_components.foxess_ha_v2.api import (
+    extract_device_detail,
     extract_realtime_by_sn,
     extract_realtime_variable_records,
     extract_scalar_variable_names,
     normalize_variable_catalog_response,
     generate_signature,
+    summarize_request_context,
 )
+from custom_components.foxess_ha_v2.value_mappings import coerce_int_code, map_device_status, map_running_state
 
 
 def test_generate_signature_matches_reference_string():
@@ -103,3 +106,40 @@ def test_normalize_variable_catalog_response_list_datas_shape():
     assert "pvPower" in catalog
     assert catalog["pvPower"]["unit"] == "kW"
     assert catalog["todayYield"]["name"]["en"] == "Today Yield"
+
+
+def test_summarize_request_context_includes_sn_and_variable_count():
+    context = summarize_request_context(
+        query={"sn": "SN-DETAIL"},
+        body={"sns": ["SN1", "SN2", "SN3", "SN4"], "variables": ["pvPower", "runningState"]},
+    )
+    assert "sn=SN-DETAIL" in context
+    assert "sns=SN1,SN2,SN3,+1" in context
+    assert "variables=2" in context
+
+
+def test_extract_device_detail_returns_result_object():
+    payload = {
+        "errno": 0,
+        "result": {
+            "deviceSN": "SN1",
+            "deviceType": "Q1-2500-E",
+            "masterVersion": "1.22",
+            "status": 1,
+        },
+    }
+    detail = extract_device_detail(payload)
+    assert detail["deviceSN"] == "SN1"
+    assert detail["deviceType"] == "Q1-2500-E"
+    assert detail["status"] == 1
+
+
+def test_map_device_status_translates_numeric_codes():
+    assert coerce_int_code("3") == 3
+    assert map_device_status(1) == "online"
+    assert map_device_status("2") == "breakdown"
+
+
+def test_map_running_state_translates_numeric_codes():
+    assert map_running_state(163) == "on-grid"
+    assert map_running_state("170") == "illegal"
