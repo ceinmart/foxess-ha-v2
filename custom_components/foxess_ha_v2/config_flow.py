@@ -327,15 +327,11 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return FoxessHaV2OptionsFlow(config_entry)
+        return FoxessHaV2OptionsFlow()
 
 
 class FoxessHaV2OptionsFlow(config_entries.OptionsFlow):
     """Allows editing per-device names and polling expressions."""
-
-    def __init__(self, config_entry) -> None:
-        # Home Assistant manages `config_entry` as a read-only property in OptionsFlow.
-        super().__init__(config_entry)
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
         errors: dict[str, str] = {}
