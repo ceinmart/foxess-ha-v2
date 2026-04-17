@@ -31,6 +31,8 @@ from .const import (
     CONF_SUPPORTED_VARIABLES,
     CONF_VARIABLE_CATALOG,
     DOMAIN,
+    REMAINING_CALLS_SUGGESTED_OBJECT_ID,
+    REMAINING_CALLS_UNIQUE_ID_SUFFIX,
 )
 from .value_mappings import (
     DEVICE_STATUS_OPTIONS,
@@ -428,11 +430,12 @@ class FoxessRemainingAccessCountSensor(CoordinatorEntity, RestoreSensor, SensorE
     """Shows latest API remaining calls snapshot and preserves the last valid value."""
 
     _attr_has_entity_name = True
-    _attr_name = "API remaining calls"
+    _attr_name = "FoxESS API remaining calls"
+    _attr_suggested_object_id = REMAINING_CALLS_SUGGESTED_OBJECT_ID
 
     def __init__(self, *, coordinator, entry_id: str) -> None:
         super().__init__(coordinator)
-        self._attr_unique_id = f"{entry_id}:api_remaining_calls"
+        self._attr_unique_id = f"{entry_id}:{REMAINING_CALLS_UNIQUE_ID_SUFFIX}"
         self._entry_id = entry_id
         self._has_valid_state = False
         self._live_available = False
