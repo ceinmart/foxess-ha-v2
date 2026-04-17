@@ -72,9 +72,16 @@ def estimate_calls_per_day(policy: PollingPolicy) -> int:
     return inside_calls + outside_calls
 
 
+def _minute_bucket_start(when: datetime) -> datetime:
+    """Normalize datetime to the start of its minute bucket."""
+    return when.replace(second=0, microsecond=0)
+
+
 def is_poll_due(policy: PollingPolicy, now_local: datetime, last_run_local: datetime | None) -> bool:
     interval = policy.inside_every_min if _is_in_window(policy, now_local) else policy.outside_every_min
     if last_run_local is None:
         return True
-    elapsed_seconds = (now_local - last_run_local).total_seconds()
-    return elapsed_seconds >= interval * 60
+    now_bucket = _minute_bucket_start(now_local)
+    last_bucket = _minute_bucket_start(last_run_local)
+    elapsed_minutes = int((now_bucket - last_bucket).total_seconds() // 60)
+    return elapsed_minutes >= interval
