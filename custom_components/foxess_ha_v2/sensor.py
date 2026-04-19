@@ -7,6 +7,7 @@ Projeto/Pasta: C:\\tmp\\foxess-ha.v2
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 from homeassistant.components.sensor import RestoreSensor, SensorDeviceClass, SensorEntity, SensorStateClass
@@ -73,6 +74,39 @@ def _safe_sensor_value(value: Any) -> Any:
     if isinstance(value, (str, int, float, bool)) or value is None:
         return value
     return str(value)
+
+
+# Versao: v0.1.4
+# Data/hora de criacao: 2026-04-18 20:57:26
+# Criado por: Codex / OpenAI
+# Projeto/Pasta: C:\tmp\foxess-ha.v2\foxess-ha-v2
+def _coerce_numeric_sensor_value(value: Any) -> int | float | None:
+    """Return a finite numeric value for HA sensor state, or None when invalid."""
+
+    if isinstance(value, bool):
+        return None
+
+    if isinstance(value, int):
+        return value
+
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            return None
+        return int(value) if value.is_integer() else value
+
+    if isinstance(value, str):
+        candidate = value.strip()
+        if not candidate:
+            return None
+        try:
+            numeric_value = float(candidate)
+        except ValueError:
+            return None
+        if not math.isfinite(numeric_value):
+            return None
+        return int(numeric_value) if numeric_value.is_integer() else numeric_value
+
+    return None
 
 
 def _build_device_info(entry_id: str, device_sn: str, device_cfg: dict[str, Any]) -> DeviceInfo:
@@ -432,6 +466,7 @@ class FoxessRemainingAccessCountSensor(CoordinatorEntity, RestoreSensor, SensorE
     _attr_has_entity_name = True
     _attr_name = "FoxESS API remaining calls"
     _attr_suggested_object_id = REMAINING_CALLS_SUGGESTED_OBJECT_ID
+    _attr_state_class = SensorStateClass.MEASUREMENT
 
     def __init__(self, *, coordinator, entry_id: str) -> None:
         super().__init__(coordinator)
@@ -452,20 +487,22 @@ class FoxessRemainingAccessCountSensor(CoordinatorEntity, RestoreSensor, SensorE
         last_state = await self.async_get_last_state()
         last_sensor_data = await self.async_get_last_sensor_data()
         if last_sensor_data is not None and last_sensor_data.native_value is not None:
-            self._has_valid_state = True
-            self._last_valid_native_value = last_sensor_data.native_value
-            attrs = last_state.attributes if last_state is not None else {}
-            self._api_total_calls = attrs.get("api_total_calls")
-            self._last_valid_at = attrs.get(ATTR_LAST_VALID_AT)
-            self._source_timestamp = attrs.get(ATTR_SOURCE_TIMESTAMP)
-            self._restored = True
-            self._stale = True
+            restored_value = _coerce_numeric_sensor_value(last_sensor_data.native_value)
+            if restored_value is not None:
+                self._has_valid_state = True
+                self._last_valid_native_value = restored_value
+                attrs = last_state.attributes if last_state is not None else {}
+                self._api_total_calls = attrs.get("api_total_calls")
+                self._last_valid_at = attrs.get(ATTR_LAST_VALID_AT)
+                self._source_timestamp = attrs.get(ATTR_SOURCE_TIMESTAMP)
+                self._restored = True
+                self._stale = True
 
         self._sync_from_live_data()
 
     def _sync_from_live_data(self) -> None:
         access_count = self.coordinator.data.get("access_count", {})
-        remaining = access_count.get("remaining")
+        remaining = _coerce_numeric_sensor_value(access_count.get("remaining"))
         self._live_available = remaining is not None
 
         if remaining is not None:
