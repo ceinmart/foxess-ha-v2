@@ -1,8 +1,10 @@
 """
-Versao: v0.1.0
-Data/hora de criacao: 2026-04-14 16:05:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+FoxESS Open API helpers and the async client used by the integration runtime.
 """
 
 from __future__ import annotations
@@ -48,12 +50,16 @@ class FoxessApiRequestError(FoxessApiError):
 
 
 def generate_signature(path: str, token: str, timestamp_ms: str) -> str:
+    """Build the request signature expected by the FoxESS Open API."""
+
     # FoxESS expects literal "\r\n" in the signature payload, matching script 020 behavior.
     signature_raw = fr"{path}\r\n{token}\r\n{timestamp_ms}"
     return hashlib.md5(signature_raw.encode("utf-8")).hexdigest()
 
 
 def _extract_result(payload: dict[str, Any]) -> Any:
+    """Return the `result` field when FoxESS wraps payloads, else the payload itself."""
+
     return payload.get("result", payload)
 
 
@@ -201,6 +207,8 @@ def normalize_variable_catalog_response(response_data: dict[str, Any]) -> dict[s
 
 
 def extract_realtime_by_sn(payload: dict[str, Any], sns: Iterable[str]) -> dict[str, dict[str, Any]]:
+    """Normalize grouped or single-device realtime responses into a `{sn: payload}` map."""
+
     sns = list(sns)
     result = _extract_result(payload)
     by_sn: dict[str, dict[str, Any]] = {}
@@ -255,6 +263,8 @@ class FoxessApiClient:
         query: dict[str, Any] | None = None,
         body: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        """Execute one FoxESS API request and normalize API-level errors."""
+
         timestamp_ms = str(int(time.time() * 1000))
         signature = generate_signature(path, self._api_key, timestamp_ms)
         headers = {
@@ -353,6 +363,8 @@ class FoxessApiClient:
         return payload
 
     async def async_list_devices(self, page: int = 1, page_size: int = 200) -> dict[str, Any]:
+        """Return the raw device list payload plus the normalized device rows."""
+
         payload = await self._request(
             "POST",
             ENDPOINT_DEVICE_LIST,
@@ -369,11 +381,15 @@ class FoxessApiClient:
         return {"raw": payload, "devices": devices}
 
     async def async_get_device_detail(self, sn: str) -> dict[str, Any]:
+        """Return normalized device detail data for one serial number."""
+
         payload = await self._request("GET", ENDPOINT_DEVICE_DETAIL, query={"sn": sn})
         detail = extract_device_detail(payload, default_sn=sn)
         return {"raw": payload, "detail": detail}
 
     async def async_get_variable_catalog(self) -> dict[str, Any]:
+        """Return the FoxESS variable catalog keyed by variable name."""
+
         payload = await self._request("GET", ENDPOINT_VARIABLE_CATALOG)
         catalog = normalize_variable_catalog_response(payload)
         return {"raw": payload, "variables": catalog}
@@ -383,6 +399,8 @@ class FoxessApiClient:
         sns: list[str],
         variables: list[str] | None = None,
     ) -> dict[str, Any]:
+        """Return realtime payloads keyed by device serial number."""
+
         body: dict[str, Any] = {"sns": sns}
         if variables:
             body["variables"] = variables
@@ -391,6 +409,8 @@ class FoxessApiClient:
         return {"raw": payload, "by_sn": by_sn}
 
     async def async_get_access_count(self) -> dict[str, Any]:
+        """Return the current FoxESS public API quota snapshot."""
+
         payload = await self._request("GET", ENDPOINT_ACCESS_COUNT)
         result = _extract_result(payload)
         total = None
@@ -401,6 +421,8 @@ class FoxessApiClient:
         return {"raw": payload, "total": total, "remaining": remaining}
 
     def load_local_schema_manifest(self) -> dict[str, Any]:
+        """Load the repository's locally versioned FoxESS endpoint inventory, if present."""
+
         manifest_path = (
             self._integration_dir
             / SCHEMA_BASE_DIR

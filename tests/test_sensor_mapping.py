@@ -1,8 +1,8 @@
 """
-Versao: v0.1.0
-Data/hora de criacao: 2026-04-14 16:20:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
 """
 
 import pytest
@@ -25,10 +25,6 @@ def test_classify_sensor_soc():
     assert str(state_class).endswith("measurement")
 
 
-# Versao: v0.1.4
-# Data/hora de criacao: 2026-04-18 20:57:26
-# Criado por: Codex / OpenAI
-# Projeto/Pasta: C:\tmp\foxess-ha.v2\foxess-ha-v2
 @pytest.mark.parametrize(
     ("raw", "expected"),
     [

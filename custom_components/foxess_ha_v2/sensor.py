@@ -1,8 +1,10 @@
 """
-Versao: v0.1.4b1
-Data/hora de criacao: 2026-04-15 10:05:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Dynamic sensors generated from FoxESS live variables, device details, and API quota data.
 """
 
 from __future__ import annotations
@@ -71,15 +73,13 @@ _DEVICE_DETAIL_SENSOR_DESCRIPTIONS: tuple[tuple[str, str, str | None], ...] = (
 
 
 def _safe_sensor_value(value: Any) -> Any:
+    """Return a Home Assistant-safe state value without dropping useful strings."""
+
     if isinstance(value, (str, int, float, bool)) or value is None:
         return value
     return str(value)
 
 
-# Versao: v0.1.4
-# Data/hora de criacao: 2026-04-18 20:57:26
-# Criado por: Codex / OpenAI
-# Projeto/Pasta: C:\tmp\foxess-ha.v2\foxess-ha-v2
 def _coerce_numeric_sensor_value(value: Any) -> int | float | None:
     """Return a finite numeric value for HA sensor state, or None when invalid."""
 
@@ -110,6 +110,8 @@ def _coerce_numeric_sensor_value(value: Any) -> int | float | None:
 
 
 def _build_device_info(entry_id: str, device_sn: str, device_cfg: dict[str, Any]) -> DeviceInfo:
+    """Build Home Assistant device metadata shared by entities of one FoxESS device."""
+
     friendly_name = device_cfg.get(CONF_FRIENDLY_NAME) or device_sn
     return DeviceInfo(
         identifiers={(DOMAIN, f"{entry_id}:{device_sn}")},
@@ -122,6 +124,8 @@ def _build_device_info(entry_id: str, device_sn: str, device_cfg: dict[str, Any]
 
 
 def _classify_sensor(variable: str, unit: str | None) -> tuple[SensorDeviceClass | None, SensorStateClass | None]:
+    """Infer Home Assistant classes from FoxESS units and common variable names."""
+
     normalized_unit = (unit or "").strip()
     lower_var = variable.lower()
 
@@ -148,6 +152,8 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
+    """Create dynamic entities for every configured FoxESS device."""
+
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     devices = entry.data.get(CONF_DEVICES, {})
     variable_catalog = entry.data.get(CONF_VARIABLE_CATALOG, {})
@@ -169,6 +175,8 @@ async def async_setup_entry(
         catalog_variables = [
             variable for variable in sorted(variable_catalog.keys()) if variable not in _RESERVED_VARIABLE_FIELDS
         ]
+        # Prefer the per-device variable list learned during setup, then fall back to
+        # what the current runtime payload or global catalog can tell us.
         variables = configured_variables or runtime_variables or catalog_variables
 
         for variable in variables:
@@ -237,6 +245,8 @@ class FoxessRestoringSensor(CoordinatorEntity, RestoreSensor, SensorEntity):
         self._extra_state_attrs: dict[str, Any] = {}
 
     async def async_added_to_hass(self) -> None:
+        """Restore the previous value before syncing in fresh coordinator data."""
+
         await super().async_added_to_hass()
 
         last_state = await self.async_get_last_state()
@@ -260,12 +270,18 @@ class FoxessRestoringSensor(CoordinatorEntity, RestoreSensor, SensorEntity):
         self._sync_from_live_data()
 
     def _normalize_restored_value(self, value: Any) -> Any:
+        """Normalize restored state values before they are reused."""
+
         return _safe_sensor_value(value)
 
     def _get_live_state(self) -> tuple[bool, Any, str | None, str | None, dict[str, Any]]:
+        """Return live availability, value, unit, source timestamp, and extra attributes."""
+
         raise NotImplementedError
 
     def _sync_from_live_data(self) -> None:
+        """Refresh the entity while preserving the last valid value if FoxESS is silent."""
+
         valid, native_value, native_unit, source_timestamp, extra_attrs = self._get_live_state()
         self._live_available = valid
 
@@ -280,6 +296,8 @@ class FoxessRestoringSensor(CoordinatorEntity, RestoreSensor, SensorEntity):
             self._stale = False
             self._extra_state_attrs = extra_attrs
         elif self._has_valid_state:
+            # Keep the last good value visible instead of regressing the entity to
+            # `unknown` during temporary FoxESS API gaps or restarts.
             self._stale = True
 
     @property
@@ -346,6 +364,8 @@ class FoxessVariableSensor(FoxessRestoringSensor):
             self._attr_state_class = state_class
 
     def _build_entity_name(self) -> str:
+        """Build a readable entity name from catalog labels or the raw variable key."""
+
         labels = self._variable_meta.get("name", {})
         if isinstance(labels, dict):
             label = labels.get("en") or labels.get("en_US")
@@ -354,11 +374,15 @@ class FoxessVariableSensor(FoxessRestoringSensor):
         return self._variable
 
     def _normalize_restored_value(self, value: Any) -> Any:
+        """Restore enum values using the same mapping used for live payloads."""
+
         if self._variable == "runningState":
             return map_running_state(value)
         return _safe_sensor_value(value)
 
     def _get_live_state(self) -> tuple[bool, Any, str | None, str | None, dict[str, Any]]:
+        """Return the live state for one FoxESS realtime variable."""
+
         realtime_by_sn = self.coordinator.data.get("realtime_by_sn", {})
         payload = realtime_by_sn.get(self._device_sn, {})
         records = extract_realtime_variable_records(payload)
@@ -418,16 +442,22 @@ class FoxessDeviceDetailSensor(FoxessRestoringSensor):
             self._attr_native_unit_of_measurement = None
 
     def _normalize_restored_value(self, value: Any) -> Any:
+        """Restore device-detail values using the same mapping used for live payloads."""
+
         if self._detail_key == "status":
             return map_device_status(value)
         return _safe_sensor_value(value)
 
     def _get_config_fallback(self) -> Any:
+        """Return config-flow metadata used when FoxESS detail data is unavailable."""
+
         if self._detail_key == "deviceType":
             return self._device_cfg.get(CONF_DEVICE_TYPE)
         return None
 
     def _get_live_state(self) -> tuple[bool, Any, str | None, str | None, dict[str, Any]]:
+        """Return the live or fallback state for one device detail attribute."""
+
         detail_by_sn = self.coordinator.data.get("device_detail_by_sn", {})
         detail = detail_by_sn.get(self._device_sn, {})
         source_timestamp = detail.get("_fetched_at")
@@ -482,6 +512,8 @@ class FoxessRemainingAccessCountSensor(CoordinatorEntity, RestoreSensor, SensorE
         self._api_total_calls: Any = None
 
     async def async_added_to_hass(self) -> None:
+        """Restore the last known quota value before the first refresh completes."""
+
         await super().async_added_to_hass()
 
         last_state = await self.async_get_last_state()
@@ -501,6 +533,8 @@ class FoxessRemainingAccessCountSensor(CoordinatorEntity, RestoreSensor, SensorE
         self._sync_from_live_data()
 
     def _sync_from_live_data(self) -> None:
+        """Refresh the remaining-calls sensor from the latest quota snapshot."""
+
         access_count = self.coordinator.data.get("access_count", {})
         remaining = _coerce_numeric_sensor_value(access_count.get("remaining"))
         self._live_available = remaining is not None

@@ -1,8 +1,10 @@
 """
-Versao: v0.1.4b1
-Data/hora de criacao: 2026-04-15 09:30:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Mappings that turn FoxESS numeric codes into readable Home Assistant states.
 """
 
 from __future__ import annotations
@@ -50,6 +52,8 @@ def coerce_int_code(value: Any) -> int | None:
 
 
 def _map_enum_value(value: Any, mapping: dict[int, str]) -> str | None:
+    """Return a mapped string when possible, or keep readable string input."""
+
     code = coerce_int_code(value)
     if code is not None:
         return mapping.get(code)

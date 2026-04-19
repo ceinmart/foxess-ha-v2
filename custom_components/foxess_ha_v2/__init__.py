@@ -1,8 +1,10 @@
 """
-Versao: v0.1.0
-Data/hora de criacao: 2026-04-14 16:05:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Home Assistant entry points for setting up and unloading the FoxESS integration.
 """
 
 from __future__ import annotations
@@ -32,12 +34,16 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
+    """Initialize the integration domain storage."""
+
     hass.data.setdefault(DOMAIN, {})
     LOGGER.debug("FoxESS HA v2 async_setup complete")
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up one FoxESS config entry and perform its first refresh."""
+
     hass.data.setdefault(DOMAIN, {})
     LOGGER.debug("Setting up FoxESS entry_id=%s title=%s", entry.entry_id, entry.title)
     api_key = entry.data[CONF_API_KEY]
@@ -58,6 +64,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload one FoxESS config entry and its platforms."""
+
     LOGGER.debug("Unloading FoxESS entry_id=%s", entry.entry_id)
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
@@ -66,6 +74,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload an existing FoxESS config entry."""
+
     LOGGER.debug("Reloading FoxESS entry_id=%s", entry.entry_id)
     await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
@@ -106,6 +116,7 @@ async def _async_migrate_remaining_calls_entity_id(hass: HomeAssistant, entry: C
             )
         return
 
+    # Keep the migration narrow so existing entity history survives the rename.
     entity_registry.async_update_entity(
         current_entity_id,
         **update_data,

@@ -1,8 +1,10 @@
 """
-Versao: v0.1.0
-Data/hora de criacao: 2026-04-14 16:05:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Config flow and options flow for discovering FoxESS devices and polling policies.
 """
 
 from __future__ import annotations
@@ -58,16 +60,22 @@ FIELD_DEVICE_POLL_PREFIX = "device_poll__"
 
 
 def _mask_api_key(api_key: str) -> str:
+    """Return a partially masked API key for safe UI labels."""
+
     if len(api_key) <= 4:
         return "*" * len(api_key)
     return f"{'*' * (len(api_key) - 4)}{api_key[-4:]}"
 
 
 def _field_name_for_device(device_sn: str) -> str:
+    """Build the form field name used for a device friendly name."""
+
     return f"{FIELD_DEVICE_NAME_PREFIX}{device_sn}"
 
 
 def _field_poll_for_device(device_sn: str) -> str:
+    """Build the form field name used for a device polling expression."""
+
     return f"{FIELD_DEVICE_POLL_PREFIX}{device_sn}"
 
 
@@ -86,10 +94,14 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._access_count_snapshot: dict[str, Any] = {}
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
+        """Collect the API key and discover the initial FoxESS device list."""
+
         errors: dict[str, str] = {}
 
         if user_input is not None:
             api_key = str(user_input[CONF_API_KEY]).strip()
+            # Use a hash-derived unique ID so Home Assistant can detect duplicates
+            # without storing or exposing the raw API key in registry identifiers.
             unique_ref = hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:12]
             await self.async_set_unique_id(f"foxess:{unique_ref}")
             self._abort_if_unique_id_configured()
@@ -122,6 +134,8 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
 
     async def async_step_select_devices(self, user_input: dict[str, Any] | None = None):
+        """Let the user choose which discovered FoxESS devices to onboard."""
+
         errors: dict[str, str] = {}
         options = self._device_option_map()
 
@@ -142,6 +156,8 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id=STEP_SELECT_DEVICES, data_schema=schema, errors=errors)
 
     async def async_step_device_settings(self, user_input: dict[str, Any] | None = None):
+        """Collect per-device names and polling expressions before creating the entry."""
+
         selected_devices = self._selected_devices()
         try:
             await self._async_discover_variables_and_access_count()
@@ -225,6 +241,8 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id=STEP_DEVICE_SETTINGS, data_schema=schema, errors=errors)
 
     def _device_option_map(self) -> dict[str, str]:
+        """Build readable labels for the multi-select device step."""
+
         options: dict[str, str] = {}
         for device in self._discovered_devices:
             sn = str(device.get("deviceSN", "")).strip()
@@ -238,10 +256,14 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return options
 
     def _selected_devices(self) -> list[dict[str, Any]]:
+        """Return the discovery rows for the serial numbers selected by the user."""
+
         selected = set(self._selected_device_sns)
         return [device for device in self._discovered_devices if str(device.get("deviceSN")) in selected]
 
     async def _async_discover_variables_and_access_count(self) -> None:
+        """Discover variable metadata, per-device variables, and the API quota snapshot."""
+
         if self._variable_catalog:
             return
 
@@ -267,7 +289,8 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             realtime_records = extract_realtime_variable_records(payload)
             inferred = sorted(realtime_records.keys())
 
-            # Merge realtime-discovered variable labels/units when catalog is incomplete.
+            # Merge runtime labels and units because the FoxESS catalog can be incomplete
+            # even when the realtime payload already exposes a usable English label.
             for variable, row in realtime_records.items():
                 existing = self._variable_catalog.get(variable, {})
                 if not isinstance(existing, dict):
@@ -307,6 +330,8 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         *,
         defaults: dict[str, Any] | None,
     ) -> vol.Schema:
+        """Create the form schema for per-device naming and polling settings."""
+
         schema_fields: dict[Any, Any] = {}
         defaults = defaults or {}
 
@@ -327,6 +352,8 @@ class FoxessHaV2ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
+        """Return the options flow class used to edit an existing config entry."""
+
         return FoxessHaV2OptionsFlow()
 
 
@@ -334,6 +361,8 @@ class FoxessHaV2OptionsFlow(config_entries.OptionsFlow):
     """Allows editing per-device names and polling expressions."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None):
+        """Update friendly names and polling expressions for configured devices."""
+
         errors: dict[str, str] = {}
         devices = dict(self.config_entry.data.get(CONF_DEVICES, {}))
 

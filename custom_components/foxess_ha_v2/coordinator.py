@@ -1,8 +1,10 @@
 """
-Versao: v0.1.0
-Data/hora de criacao: 2026-04-14 16:05:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Central coordinator that batches realtime polling and throttles slower API calls.
 """
 
 from __future__ import annotations
@@ -52,12 +54,16 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_device_detail_by_sn: dict[str, dict[str, Any]] = {}
 
     def _detail_refresh_due(self, now_local, sn: str) -> bool:
+        """Return whether a device detail fallback refresh is due for one serial number."""
+
         last_refresh = self._last_detail_refresh_by_sn.get(sn)
         if last_refresh is None:
             return True
         return now_local - last_refresh >= timedelta(minutes=DEVICE_DETAIL_FALLBACK_REFRESH_INTERVAL_MINUTES)
 
     async def _async_update_data(self) -> dict[str, Any]:
+        """Refresh due realtime payloads plus slower detail and quota snapshots."""
+
         now_local = dt_util.now()
         devices = self._config_entry.data.get(CONF_DEVICES, {})
         realtime_by_sn: dict[str, dict[str, Any]] = {}
@@ -101,6 +107,8 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if missing_sns:
                     LOGGER.debug("Coordinator grouped response missing %s devices", len(missing_sns))
                 for sn in missing_sns:
+                    # Retry missing devices individually because FoxESS grouped responses
+                    # can omit one serial number even when the request itself succeeds.
                     single_payload = await self._api_client.async_query_realtime([sn])
                     single_by_sn = single_payload.get("by_sn", {})
                     if sn in single_by_sn:
@@ -145,6 +153,8 @@ class FoxessDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 should_refresh_access = delta >= timedelta(minutes=ACCESS_COUNT_REFRESH_INTERVAL_MINUTES)
 
             if should_refresh_access:
+                # Quota data changes more slowly than realtime telemetry, so we keep it
+                # on its own refresh interval to reduce unnecessary API usage.
                 self._last_access_count = await self._api_client.async_get_access_count()
                 self._last_access_refresh = now_local
                 LOGGER.debug("Coordinator refreshed access count snapshot")

@@ -1,8 +1,10 @@
 """
-Versao: v0.1.0
-Data/hora de criacao: 2026-04-14 16:05:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Diagnostics helpers for exposing safe runtime data to Home Assistant support tools.
 """
 
 from __future__ import annotations
@@ -18,6 +20,8 @@ from .const import DOMAIN
 
 
 def _mask_secret(secret: str | None) -> str:
+    """Mask secrets before they are returned through diagnostics."""
+
     if not secret:
         return ""
     if len(secret) <= 4:
@@ -26,6 +30,8 @@ def _mask_secret(secret: str | None) -> str:
 
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict[str, Any]:
+    """Return redacted diagnostics for a FoxESS config entry."""
+
     redacted_data = deepcopy(dict(entry.data))
     if CONF_API_KEY in redacted_data:
         redacted_data[CONF_API_KEY] = _mask_secret(redacted_data[CONF_API_KEY])

@@ -1,8 +1,10 @@
 """
-Versao: v0.1.4b1
-Data/hora de criacao: 2026-04-15 10:20:00
-Criado por: Codex / OpenAI
-Projeto/Pasta: C:\\tmp\\foxess-ha.v2
+Version: v0.1.4
+Created at: 2026-04-19 10:13:52 -03:00
+Created by: Codex / OpenAI
+Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
+
+Binary sensors exposed by the FoxESS integration.
 """
 
 from __future__ import annotations
@@ -33,6 +35,8 @@ from .const import (
 
 
 def _build_device_info(entry_id: str, device_sn: str, device_cfg: dict) -> DeviceInfo:
+    """Build Home Assistant device metadata shared by entities of one FoxESS device."""
+
     friendly_name = device_cfg.get(CONF_FRIENDLY_NAME) or device_sn
     return DeviceInfo(
         identifiers={(DOMAIN, f"{entry_id}:{device_sn}")},
@@ -49,6 +53,8 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
+    """Set up binary sensors for the configured FoxESS devices."""
+
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     devices = entry.data.get(CONF_DEVICES, {})
 
@@ -86,6 +92,8 @@ class FoxessHasBatteryBinarySensor(CoordinatorEntity, RestoreEntity, BinarySenso
         self._stale = False
 
     async def async_added_to_hass(self) -> None:
+        """Restore the last known battery capability before the first fresh update arrives."""
+
         await super().async_added_to_hass()
 
         last_state = await self.async_get_last_state()
@@ -100,12 +108,16 @@ class FoxessHasBatteryBinarySensor(CoordinatorEntity, RestoreEntity, BinarySenso
         self._sync_from_live_data()
 
     def _sync_from_live_data(self) -> None:
+        """Refresh the entity from cached device detail or config-entry fallbacks."""
+
         detail_by_sn = self.coordinator.data.get("device_detail_by_sn", {})
         detail = detail_by_sn.get(self._device_sn, {})
         raw_value = detail.get("hasBattery")
         source_timestamp = detail.get("_fetched_at")
 
         if raw_value is None:
+            # Keep the binary sensor stable even when FoxESS detail data is missing by
+            # falling back to what was learned during the original config flow.
             raw_value = self._device_cfg.get(CONF_HAS_BATTERY)
             source_timestamp = source_timestamp or self.coordinator.data.get("updated_at")
 
