@@ -1,6 +1,6 @@
 """
 Version: v0.1.4
-Created at: 2026-04-19 10:13:52 -03:00
+Created at: 2026-04-20 09:43:37 -03:00
 Created by: Codex / OpenAI
 Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
 
@@ -47,6 +47,19 @@ class FoxessApiAuthError(FoxessApiError):
 
 class FoxessApiRequestError(FoxessApiError):
     """Raised when request fails for non-auth reasons."""
+
+
+def build_client_error_message(path: str, exc: Exception) -> str:
+    """Return a user-facing message for transport and TLS-layer failures."""
+
+    if isinstance(exc, aiohttp.ClientConnectorCertificateError):
+        return (
+            f"TLS certificate verification failed for {path}. "
+            "Check the FoxESS certificate chain or the local CA bundle on the Home Assistant host."
+        )
+    if isinstance(exc, aiohttp.ClientSSLError):
+        return f"TLS/SSL handshake failed for {path}: {exc}"
+    return f"Request to {path} failed: {exc}"
 
 
 def generate_signature(path: str, token: str, timestamp_ms: str) -> str:
@@ -333,7 +346,7 @@ class FoxessApiClient:
                 int((time.perf_counter() - started) * 1000),
                 str(exc),
             )
-            raise FoxessApiRequestError(f"Request to {path} failed: {exc}") from exc
+            raise FoxessApiRequestError(build_client_error_message(path, exc)) from exc
         except asyncio.TimeoutError as exc:
             LOGGER.debug(
                 "FoxESS API call method=%s path=%s context=%s status=%s errno=%s duration_ms=%s error=%s",

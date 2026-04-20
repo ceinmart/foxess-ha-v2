@@ -1,13 +1,16 @@
 """
 Version: v0.1.4
-Created at: 2026-04-19 10:13:52 -03:00
+Created at: 2026-04-20 09:43:37 -03:00
 Created by: Codex / OpenAI
 Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
 """
 
 import hashlib
 
+import aiohttp
+
 from custom_components.foxess_ha_v2.api import (
+    build_client_error_message,
     extract_device_detail,
     extract_realtime_by_sn,
     extract_realtime_variable_records,
@@ -19,10 +22,37 @@ from custom_components.foxess_ha_v2.api import (
 from custom_components.foxess_ha_v2.value_mappings import coerce_int_code, map_device_status, map_running_state
 
 
+class _DummyCertificateError(aiohttp.ClientConnectorCertificateError):
+    def __init__(self) -> None:
+        Exception.__init__(self, "certificate mismatch")
+
+
+class _DummyClientSslError(aiohttp.ClientSSLError):
+    def __init__(self, message: str) -> None:
+        Exception.__init__(self, message)
+
+
 def test_generate_signature_matches_reference_string():
     signature = generate_signature("/op/v0/device/list", "token123", "1700000000000")
     assert len(signature) == 32
     assert signature.isalnum()
+
+
+def test_build_client_error_message_for_certificate_errors():
+    message = build_client_error_message("/op/v1/device/detail", _DummyCertificateError())
+    assert "TLS certificate verification failed" in message
+    assert "/op/v1/device/detail" in message
+
+
+def test_build_client_error_message_for_ssl_errors():
+    message = build_client_error_message("/op/v1/device/detail", _DummyClientSslError("handshake failed"))
+    assert "TLS/SSL handshake failed" in message
+    assert "handshake failed" in message
+
+
+def test_build_client_error_message_for_generic_transport_errors():
+    message = build_client_error_message("/op/v1/device/detail", RuntimeError("boom"))
+    assert message == "Request to /op/v1/device/detail failed: boom"
 
 
 def test_generate_signature_uses_literal_backslash_rn():

@@ -1,6 +1,6 @@
 """
 Version: v0.1.4
-Created at: 2026-04-19 10:13:52 -03:00
+Created at: 2026-04-20 09:43:37 -03:00
 Created by: Codex / OpenAI
 Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
 
@@ -54,7 +54,9 @@ ACCESS_COUNT_REFRESH_INTERVAL_MINUTES = 30
 DEVICE_DETAIL_REFRESH_INTERVAL_MINUTES = 60
 DEVICE_DETAIL_FALLBACK_REFRESH_INTERVAL_MINUTES = 15
 REQUEST_TIMEOUT_SECONDS = 20
-REQUEST_VERIFY_SSL = False
+# Keep TLS verification enabled in normal operation so Home Assistant can
+# validate the FoxESS Cloud certificate chain instead of silently trusting it.
+REQUEST_VERIFY_SSL = True
 
 # Entity metadata.
 REMAINING_CALLS_UNIQUE_ID_SUFFIX = "api_remaining_calls"
