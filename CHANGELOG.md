@@ -1,6 +1,6 @@
 <!--
-Version: v0.1.4
-Created at: 2026-04-19 10:13:52 -03:00
+Version: v0.1.5
+Created at: 2026-04-20 10:08:02 -03:00
 Created by: Codex / OpenAI
 Project/Folder: C:\tmp\foxess-ha.v2\foxess-ha-v2
 -->
@@ -9,7 +9,20 @@ Project/Folder: C:\tmp\foxess-ha.v2\foxess-ha-v2
 
 Entries are listed in descending order, newest first, grouped by version and release type.
 
-## Serie v0.1.4
+## Series v0.1.5
+
+### Releases
+
+#### v0.1.5 - 2026-04-20
+Type: Official release.
+
+- docs: rewrite the public README in English with installation, API, entity, polling, quota, and timestamp guidance.
+- docs: add Python docstrings and targeted inline comments so the integration is easier to review and maintain.
+- fix(i18n): move integration title and flow strings to `translations/*.json` and remove `strings.json` for better custom-integration compatibility.
+- fix(security): enable TLS certificate verification by default for FoxESS API requests.
+- fix(api): improve transport-layer error messages for TLS certificate and SSL handshake failures.
+
+## Series v0.1.4
 
 ### Releases
 
