@@ -1,5 +1,5 @@
 <!--
-Version: v0.1.5
+Version: v0.1.6
 Created at: 2026-04-20 10:08:02 -03:00
 Created by: Codex / OpenAI
 Project/Folder: C:\tmp\foxess-ha.v2\foxess-ha-v2
@@ -8,6 +8,16 @@ Project/Folder: C:\tmp\foxess-ha.v2\foxess-ha-v2
 # Changelog
 
 Entries are listed in descending order, newest first, grouped by version and release type.
+
+## Series v0.1.6
+
+### Releases
+
+#### v0.1.6 - 2026-05-01
+Type: Official release.
+
+- fix(sensor): classify FoxESS temperature variables as Home Assistant temperature entities when the API reports `℃`, `°C`, or equivalent Celsius units.
+- fix(sensor): infer Celsius temperature metadata for FoxESS temperature variable names when the runtime unit is missing.
 
 ## Series v0.1.5
 

@@ -1,5 +1,5 @@
 """
-Version: v0.1.4
+Version: v0.1.6
 Created at: 2026-04-19 10:13:52 -03:00
 Created by: Codex / OpenAI
 Project/Folder: C:\\tmp\\foxess-ha.v2\\foxess-ha-v2
@@ -14,6 +14,7 @@ from typing import Any
 
 from homeassistant.components.sensor import RestoreSensor, SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -50,7 +51,17 @@ _ENERGY_UNITS = {"Wh", "kWh", "MWh"}
 _CURRENT_UNITS = {"A", "mA"}
 _VOLTAGE_UNITS = {"V", "mV"}
 _FREQUENCY_UNITS = {"Hz"}
-_TEMPERATURE_UNITS = {"C", "degC", "Cel"}
+_TEMPERATURE_UNITS = {
+    "C",
+    "c",
+    "degC",
+    "Cel",
+    "celsius",
+    "Celsius",
+    UnitOfTemperature.CELSIUS,
+    "\u2103",
+}
+_TEMPERATURE_VARIABLE_MARKERS = ("temp", "temperat")
 _RESERVED_VARIABLE_FIELDS = {
     "deviceSN",
     "deviceSn",
@@ -109,6 +120,30 @@ def _coerce_numeric_sensor_value(value: Any) -> int | float | None:
     return None
 
 
+def _is_temperature_variable(variable: str) -> bool:
+    """Return True for FoxESS variables that represent temperature values."""
+
+    lower_var = variable.lower()
+    return any(marker in lower_var for marker in _TEMPERATURE_VARIABLE_MARKERS)
+
+
+def _normalize_sensor_unit(unit: Any, variable: str | None = None) -> str | None:
+    """Normalize FoxESS units to values accepted by Home Assistant device classes."""
+
+    if unit is None:
+        if variable is not None and _is_temperature_variable(variable):
+            return UnitOfTemperature.CELSIUS
+        return None
+
+    normalized_unit = str(unit).strip()
+    if normalized_unit in _TEMPERATURE_UNITS:
+        return UnitOfTemperature.CELSIUS
+    if not normalized_unit and variable is not None and _is_temperature_variable(variable):
+        return UnitOfTemperature.CELSIUS
+
+    return normalized_unit
+
+
 def _build_device_info(entry_id: str, device_sn: str, device_cfg: dict[str, Any]) -> DeviceInfo:
     """Build Home Assistant device metadata shared by entities of one FoxESS device."""
 
@@ -126,7 +161,7 @@ def _build_device_info(entry_id: str, device_sn: str, device_cfg: dict[str, Any]
 def _classify_sensor(variable: str, unit: str | None) -> tuple[SensorDeviceClass | None, SensorStateClass | None]:
     """Infer Home Assistant classes from FoxESS units and common variable names."""
 
-    normalized_unit = (unit or "").strip()
+    normalized_unit = _normalize_sensor_unit(unit, variable)
     lower_var = variable.lower()
 
     if normalized_unit in _POWER_UNITS:
@@ -189,7 +224,7 @@ async def async_setup_entry(
             if variable in runtime_records:
                 runtime_row = runtime_records[variable]
                 if runtime_row.get("unit") and not variable_meta.get("unit"):
-                    variable_meta["unit"] = runtime_row.get("unit")
+                    variable_meta["unit"] = _normalize_sensor_unit(runtime_row.get("unit"))
                 if runtime_row.get("name"):
                     labels = variable_meta.get("name", {})
                     if not isinstance(labels, dict):
@@ -352,7 +387,7 @@ class FoxessVariableSensor(FoxessRestoringSensor):
 
         self._attr_unique_id = f"{entry_id}:{device_sn}:{variable}"
         self._attr_name = self._build_entity_name()
-        self._attr_native_unit_of_measurement = variable_meta.get("unit")
+        self._attr_native_unit_of_measurement = _normalize_sensor_unit(variable_meta.get("unit"), variable)
 
         if self._variable == "runningState":
             self._attr_device_class = SensorDeviceClass.ENUM
@@ -393,7 +428,7 @@ class FoxessVariableSensor(FoxessRestoringSensor):
 
         raw_value = row.get("value")
         source_timestamp = row.get("time") or payload.get("time")
-        native_unit = row.get("unit") or self._variable_meta.get("unit")
+        native_unit = _normalize_sensor_unit(row.get("unit") or self._variable_meta.get("unit"), self._variable)
         extra_attrs: dict[str, Any] = {
             "device_sn": self._device_sn,
             "variable": self._variable,
@@ -434,7 +469,7 @@ class FoxessDeviceDetailSensor(FoxessRestoringSensor):
         self._detail_key = detail_key
         self._attr_unique_id = f"{entry_id}:{device_sn}:detail:{detail_key}"
         self._attr_name = entity_name
-        self._attr_native_unit_of_measurement = native_unit
+        self._attr_native_unit_of_measurement = _normalize_sensor_unit(native_unit)
 
         if self._detail_key == "status":
             self._attr_device_class = SensorDeviceClass.ENUM
